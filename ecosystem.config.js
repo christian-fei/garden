@@ -19,7 +19,7 @@ module.exports = {
 
   deploy: {
     production: {
-      user: 'node',
+      user: 'pi',
       host: 'hiddenpi',
       ref: 'origin/master',
       repo: 'git@github.com:christian-fei/garden.git',
