@@ -22,7 +22,7 @@ module.exports = {
       user: 'pi',
       host: 'hiddenpi',
       ref: 'origin/master',
-      repo: 'https://github.com/christian-fei/garden/issues',
+      repo: 'git@github.com:christian-fei/garden.git',
       path: '/home/pi/garden',
       'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production'
     }
