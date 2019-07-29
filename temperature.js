@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 if (require.main === module) {
   main()
     .then(() => process.exit(0))
@@ -5,10 +7,12 @@ if (require.main === module) {
       console.error(err)
       process.exit(1)
     })
+} else {
+  module.exports = main
 }
 
 async function main () {
-  setInterval(() => {
+  return new Promise(() => setInterval(() => {
     console.log('temperature running')
-  }, 1000 * 60 * 5)
+  }, 1000 * 60 * 5))
 }
