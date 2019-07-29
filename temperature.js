@@ -8,7 +8,7 @@ if (require.main === module) {
 }
 
 async function main () {
-  setTimeout(() => {
+  setInterval(() => {
     console.log('temperature running')
   }, 1000 * 60 * 5)
 }
