@@ -16,8 +16,12 @@ if (require.main === module) {
 async function main (type = 11, gpio = 4) {
   console.log('temperature running')
 
-  const { temperature, humidity } = await read(type, gpio)
-  console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
+  try {
+    const { temperature, humidity } = await read(type, gpio)
+    console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
+  } catch (err) {
+    console.error(err)
+  }
 
   setTimeout(main, 10000, type, gpio)
 }
