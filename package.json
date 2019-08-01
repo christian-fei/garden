@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/christian-fei/garden/issues"
   },
-  "homepage": "https://github.com/christian-fei/garden#readme"
+  "homepage": "https://github.com/christian-fei/garden#readme",
+  "dependencies": {
+    "node-dht-sensor": "^0.3.0"
+  }
 }
