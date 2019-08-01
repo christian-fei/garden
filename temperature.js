@@ -20,3 +20,6 @@ async function main (type = 11, gpio = 4) {
 
   setTimeout(main, 10000, type, gpio)
 }
+
+process.on('unhandledRejection', (err) => console.error(err))
+process.on('uncaughtException', (err) => console.error(err))
