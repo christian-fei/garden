@@ -3,12 +3,7 @@
 const { promises: { read } } = require('node-dht-sensor')
 
 if (require.main === module) {
-  main()
-    .then(() => process.exit(0))
-    .catch(function (err) {
-      console.error(err)
-      process.exit(1)
-    })
+  setImmediate(main, 11, 4)
 } else {
   module.exports = main
 }
