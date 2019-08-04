@@ -1,1 +1,1 @@
-30 * * * * sh /home/pi/garden/current/take-current-snapshot > /home/pi/snapshots.log 2>&1
+30 * * * * sh /home/pi/garden/current/take-current-snapshot >> /home/pi/snapshots.log 2>&1
