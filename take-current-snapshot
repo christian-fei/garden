@@ -1,0 +1,11 @@
+#!/bin/bash
+
+mkdir -p /home/pi/snapshots
+DATE=$(date +"%Y-%m-%d_%H%M")
+SNAPSHOT="$DATE.jpg"
+echo "taking snapshot $SNAPSHOT"
+
+raspistill \
+  --width 1024 \
+  --height 768 \
+  -o /home/pi/snapshots/$SNAPSHOT
