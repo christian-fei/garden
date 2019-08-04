@@ -2,10 +2,14 @@
 
 mkdir -p /home/pi/snapshots
 DATE=$(date +"%Y-%m-%d_%H%M")
-SNAPSHOT="$DATE.jpg"
-echo "taking snapshot $SNAPSHOT"
+SNAPSHOT_NAME="$DATE.jpg"
+SNAPSHOT_PATH="/home/pi/snapshots/$SNAPSHOT_NAME"
+echo "taking snapshot $SNAPSHOT_PATH"
+
 
 raspistill \
   --width 1024 \
   --height 768 \
-  -o /home/pi/snapshots/$SNAPSHOT
+  -o /home/pi/snapshots/$SNAPSHOT_PATH
+
+echo "snapshot saved $SNAPSHOT_PATH"
