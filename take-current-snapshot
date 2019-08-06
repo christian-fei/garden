@@ -9,8 +9,10 @@ SNAPSHOT_PATH="/home/pi/snapshots/$SNAPSHOT_NAME"
 echo "taking snapshot $SNAPSHOT_PATH"
 
 raspistill \
-  --width 1024 \
-  --height 768 \
   -o "$SNAPSHOT_PATH"
+  # --width 2048 \
+  # --height 1536 \
+  # --width 1024 \
+  # --height 768 \
 
 echo "snapshot saved $SNAPSHOT_PATH"
