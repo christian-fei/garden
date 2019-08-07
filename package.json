@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "deploy": "pm2 deploy production"
+    "deploy": "pm2 deploy production",
+    "temperature-humidity": "node temperature-humidity.js"
   },
   "repository": {
     "type": "git",
