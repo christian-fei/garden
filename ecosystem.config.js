@@ -1,9 +1,9 @@
 module.exports = {
   apps: [{
     name: 'temperature-humidity',
-    script: 'npm',
-    args: 'run temperature-humidity',
-
+    script: 'temperature-humidity.js',
+    // args: 'run temperature-humidity',
+    exec_mode: 'fork',
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     instances: 1,
     // autorestart: true,
