@@ -1,36 +1,41 @@
 #!/usr/bin/env node
 
-// const { promises: { read } } = require('node-dht-sensor')
 const pm2 = require('pm2')
 
-setTimeout(main, 10000)
+pm2.connect(onceConnected)
 
-function main () {
-  pm2.connect((errConnect) => {
-    if (errConnect) return console.error(errConnect)
-    console.log('temperature / humidity running')
-    try {
-      // const { temperature, humidity } = await read(type, gpio)
-      // console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
-      console.log('running')
-      pm2.list((err, processes) => {
-        if (err) { return console.error(err) }
-        console.log('processes', processes)
-        for (const p of processes) {
-          pm2.sendDataToProcessId(p.pm_id, {
-            data: {
-              temperature: 30,
-              humidity: 50
-            },
-            topic: 'temperature-humidity'
-          })
-        }
-      })
-    } catch (err) {
-      console.log(err)
+function onceConnected (err) {
+  if (err) {
+    console.error('pm2 connection failure', err)
+    return
+  }
+
+  // const { temperature, humidity } = await read(type, gpio)
+  // console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
+
+  const temperature = 50
+  const humidity = 50
+
+  setTimeout(onceConnected, 5000)
+
+  pm2.list((err, procs) => {
+    if (err) {
+      console.error('pm2 procs error', err)
+      return
     }
+    procs.forEach(({ pm_id: id }) => {
+      pm2.sendDataToProcessId({
+        type: 'process:msg',
+        topic: 'dht11', // can be anything
+        data: { temperature, humidity },
+        id
+      }, (err, res) => {
+        if (err) {
+          console.error('pm2 send failure', err)
+          return
+        }
+        console.log('pm2 send res', res)
+      })
+    })
   })
 }
-
-process.on('unhandledRejection', (err) => console.error(err))
-process.on('uncaughtException', (err) => console.error(err))
