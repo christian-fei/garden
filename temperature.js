@@ -17,7 +17,7 @@ async function main (type = 11, gpio = 4) {
     console.log('running')
     setTimeout(main, 10000, type, gpio)
   } catch (err) {
-    console.error(err)
+    console.log(err)
   }
 }
 
