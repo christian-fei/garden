@@ -7,6 +7,7 @@ module.exports = {
     // args: 'one two',
     instances: 1,
     // autorestart: true,
+    restart_delay: 3000,
     watch: false,
     // max_memory_restart: '1G',
     env: {

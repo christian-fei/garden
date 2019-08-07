@@ -3,18 +3,12 @@
 // const { promises: { read } } = require('node-dht-sensor')
 const pm2 = require('pm2')
 
-if (require.main === module) {
-  main()
-} else {
-  module.exports = main
-}
+setInterval(main, 10000)
 
-async function main (type = 11, gpio = 4) {
+function main () {
   pm2.connect((errConnect) => {
     if (errConnect) return console.error(errConnect)
-
     console.log('temperature / humidity running')
-
     try {
       // const { temperature, humidity } = await read(type, gpio)
       // console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
@@ -30,7 +24,6 @@ async function main (type = 11, gpio = 4) {
           })
         }
       })
-      setTimeout(main, 10000, type, gpio)
     } catch (err) {
       console.log(err)
     }
