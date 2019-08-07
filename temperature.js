@@ -17,9 +17,9 @@ async function main (type = 11, gpio = 4) {
     console.log('running')
   } catch (err) {
     console.error(err)
+  } finally {
+    setTimeout(main, 10000, type, gpio)
   }
-
-  setTimeout(main, 10000, type, gpio)
 }
 
 process.on('unhandledRejection', (err) => console.error(err))
