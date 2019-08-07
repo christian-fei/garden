@@ -3,7 +3,7 @@
 // const { promises: { read } } = require('node-dht-sensor')
 const pm2 = require('pm2')
 
-setInterval(main, 10000)
+setTimeout(main, 10000)
 
 function main () {
   pm2.connect((errConnect) => {
