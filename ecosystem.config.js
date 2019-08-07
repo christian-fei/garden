@@ -16,6 +16,20 @@ module.exports = {
     env_production: {
       NODE_ENV: 'production'
     }
+  }, {
+    name: 'logger',
+    script: 'logger.js',
+    exec_mode: 'fork',
+    instances: 1,
+    restart_delay: 3000,
+    watch: false,
+    // max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'development'
+    },
+    env_production: {
+      NODE_ENV: 'production'
+    }
   }],
 
   deploy: {
