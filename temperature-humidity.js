@@ -18,9 +18,11 @@ function main () {
         console.log('processes', processes)
         for (const p of processes) {
           pm2.sendDataToProcessId(p.pm_id, {
-            type: 'temperature',
-            temperature: 30,
-            humidity: 50
+            data: {
+              temperature: 30,
+              humidity: 50
+            },
+            topic: 'temperature-humidity'
           })
         }
       })
