@@ -15,10 +15,9 @@ async function main (type = 11, gpio = 4) {
     const { temperature, humidity } = await read(type, gpio)
     console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
     console.log('running')
+    setTimeout(main, 10000, type, gpio)
   } catch (err) {
     console.error(err)
-  } finally {
-    setTimeout(main, 10000, type, gpio)
   }
 }
 
