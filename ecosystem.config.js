@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
-    name: 'temperature',
-    script: 'temperature.js',
+    name: 'temperature-humidity',
+    script: 'temperature-humidity.js',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     // args: 'one two',
