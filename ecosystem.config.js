@@ -8,6 +8,7 @@ module.exports = {
     instances: 1,
     // autorestart: true,
     watch: false,
+    watch_ignore: false,
     // max_memory_restart: '1G',
     env: {
       NODE_ENV: 'development'
@@ -24,7 +25,7 @@ module.exports = {
       ref: 'origin/master',
       repo: 'git@github.com:christian-fei/garden.git',
       path: '/home/pi/garden',
-      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production'
+      'post-deploy': 'npm install && pm2 startOrGracefulReload ecosystem.config.js --env production'
     }
   }
 }
