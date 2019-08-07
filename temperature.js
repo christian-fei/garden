@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { promises: { read } } = require('node-dht-sensor')
+// const { promises: { read } } = require('node-dht-sensor')
 
 if (require.main === module) {
   main()
@@ -9,18 +9,17 @@ if (require.main === module) {
 }
 
 async function main (type = 11, gpio = 4) {
-  return new Promise(async function processSensor () {
-    console.log('temperature running')
+  console.log('temperature running')
 
-    try {
-      const { temperature, humidity } = await read(type, gpio)
-      console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
-    } catch (err) {
-      console.error(err)
-    }
+  try {
+    // const { temperature, humidity } = await read(type, gpio)
+    // console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
+    console.log('running')
+  } catch (err) {
+    console.error(err)
+  }
 
-    setTimeout(processSensor, 10000)
-  })
+  setTimeout(main, 10000, type, gpio)
 }
 
 process.on('unhandledRejection', (err) => console.error(err))
