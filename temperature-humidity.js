@@ -14,10 +14,10 @@ setImmediate(async function main (model, gpio) {
   }
 }, 11, 4)
 
-function read () {
+async function read () {
   const temperature = 10 + 45 * Math.random()
   const humidity = 30 + 40 * Math.random()
-  return Promise.resolve({ temperature, humidity })
+  return { temperature, humidity }
 }
 
 function seconds (s) {
