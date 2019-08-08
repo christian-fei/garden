@@ -1,41 +1,25 @@
 #!/usr/bin/env node
 
-const pm2 = require('pm2')
+const { broadcast } = require('./lib/ipc')
 
-pm2.connect(onceConnected)
-
-function onceConnected (err) {
-  if (err) {
-    console.error('pm2 connection failure', err)
-    return
+setImmediate(async function main (model, gpio) {
+  try {
+    const { temperature, humidity } = await read(model, gpio)
+    console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
+    await broadcast('dht11', { temperature, humidity })
+  } catch (err) {
+    console.log(err)
+  } finally {
+    setTimeout(main, seconds(5), model, gpio)
   }
+}, 11, 4)
 
-  // const { temperature, humidity } = await read(type, gpio)
-  // console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
+function read () {
+  const temperature = 10 + 45 * Math.random()
+  const humidity = 30 + 40 * Math.random()
+  return Promise.resolve({ temperature, humidity })
+}
 
-  const temperature = 50
-  const humidity = 50
-
-  setTimeout(onceConnected, 5000)
-
-  pm2.list((err, procs) => {
-    if (err) {
-      console.error('pm2 procs error', err)
-      return
-    }
-    procs.forEach(({ pm_id: id }) => {
-      pm2.sendDataToProcessId({
-        type: 'process:msg',
-        topic: 'dht11', // can be anything
-        data: { temperature, humidity },
-        id
-      }, (err, res) => {
-        if (err) {
-          console.error('pm2 send failure', err)
-          return
-        }
-        console.log('pm2 send res', res)
-      })
-    })
-  })
+function seconds (s) {
+  return s * 1000
 }
