@@ -14,6 +14,7 @@ const reboot = [
 bot.sendMessage(process.env.TELEGRAM_CHAT_ID, reboot[~~(reboot.length * Math.random())])
 
 process.on('message', ({ topic, data }) => {
+  console.log('topic', topic)
   if (topic === 'dht11') {
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
   }
