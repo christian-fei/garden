@@ -18,3 +18,16 @@ setImmediate(async function main (model, gpio, { assign } = Object) {
     console.error(err)
   }
 }, 11, 4)
+
+process.on('beforeExit', (code) => console.log('-- beforeExit with code: ', code))
+process.on('disconnect', () => console.log('-- disconnet'))
+process.on('exit', (code) =>  console.log('-- exit with code: ', code))
+process.on('message', (message) => console.log('-- message', message))
+process.on('multipleResolves', (type, promise, reason) => {
+  console.error('-- multipleResolves', type, promise, reason)
+  setImmediate(() => process.exit(1))
+})
+process.on('rejectionHandled', (promise) => console.log('-- rejectionHandled', promise))
+process.on('uncaughtException', (err, origin) => console.log('-- uncaughtException', err, origin))
+process.on('unhandledRejection', (reason, promise) => console.log('-- unhandledRejection', promise, reason))
+process.on('warning', (warning) => console.log('-- warning', warn))
