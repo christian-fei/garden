@@ -3,24 +3,24 @@
 const { basename } = require('path')
 const { promises: { read } } = require('node-dht-sensor')
 const { broadcast } = require('../lib/ipc')
-
+const schedule = require('node-schedule')
 const topicName = filename => basename(filename).replace('.js', '')
 
-const SENSOR_READ_INTERVAL = 1000 * 60 * 5
-
+const model = 11
+const gpio = 4
 const previous = { temperature: undefined, humidity: undefined }
-setImmediate(async function main (model, gpio, { assign } = Object) {
+
+schedule.scheduleJob('*/5 * * * *', async function () {
   try {
     const { temperature, humidity } = await read(model, gpio)
-    setTimeout(main, SENSOR_READ_INTERVAL, model, gpio)
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
       await broadcast(topicName(__filename), { temperature, humidity })
-      assign(previous, { temperature, humidity })
+      Object.assign(previous, { temperature, humidity })
     }
   } catch (err) {
     console.error(err)
   }
-}, 11, 4)
+})
 
 process.on('beforeExit', (code) => console.log('-- beforeExit with code: ', code))
 process.on('disconnect', () => console.log('-- disconnet'))
