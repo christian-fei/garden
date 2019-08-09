@@ -56,7 +56,7 @@ module.exports = {
     production: {
       user: 'pi',
       // host: '192.168.1.110',
-      hsot: '151.62.218.46',
+      host: '151.62.218.46',
       ref: 'origin/master',
       repo: 'git@github.com:christian-fei/garden.git',
       path: '/home/pi/garden',
