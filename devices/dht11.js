@@ -6,7 +6,7 @@ const { broadcast } = require('../lib/ipc')
 
 const topicName = filename => basename(filename).replace('.js', '')
 
-const SENSOR_READ_INTERVAL = 1000 * 60
+const SENSOR_READ_INTERVAL = 1000 * 60 * 5
 
 const previous = { temperature: undefined, humidity: undefined }
 setImmediate(async function main (model, gpio, { assign } = Object) {
