@@ -11,25 +11,25 @@ const reboot = [
   'back online!'
 ]
 
-bot.sendMessage(process.env.tg_chat_id, reboot[~~(reboot.length * Math.random())])
+bot.sendMessage(process.env.TELEGRAM_CHAT_ID, reboot[~~(reboot.length * Math.random())])
 
 process.on('message', ({ topic, data }) => {
   if (topic === 'dht11') {
-    bot.sendMessage(process.env.tg_chat_id, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
   }
 })
 
 bot.onText(/\/help/, function onHelp ({ chat }) {
-  bot.sendMessage(process.env.tg_chat_id, 'How may i help you?', {
-    'reply_markup': {
-      'inline_keyboard': [[
+  bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'How may i help you?', {
+    reply_markup: {
+      inline_keyboard: [[
         {
-          'text': 'A',
-          'callback_data': 'A1'
+          text: 'A',
+          callback_data: 'A1'
         },
         {
-          'text': 'B',
-          'callback_data': 'C1'
+          text: 'B',
+          callback_data: 'C1'
         }]
       ]
     }

@@ -21,7 +21,7 @@ setImmediate(async function main (model, gpio, { assign } = Object) {
 
 process.on('beforeExit', (code) => console.log('-- beforeExit with code: ', code))
 process.on('disconnect', () => console.log('-- disconnet'))
-process.on('exit', (code) =>  console.log('-- exit with code: ', code))
+process.on('exit', (code) => console.log('-- exit with code: ', code))
 process.on('message', (message) => console.log('-- message', message))
 process.on('multipleResolves', (type, promise, reason) => {
   console.error('-- multipleResolves', type, promise, reason)
