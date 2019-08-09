@@ -16,12 +16,10 @@ setImmediate(async function main (model, gpio, { assign } = Object) {
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
       await broadcast(basename(__filename), { temperature, humidity })
       assign(previous, { temperature, humidity })
-      console.log('%s | ipc broadcast of new values', new Date().toISOString())
     }
   } catch (err) {
-    console.log('%s | ', new Date().toISOString(), err)
+    console.error(err)
   } finally {
     setTimeout(main, 2500, model, gpio)
-    console.log('%s | sleep %dms', new Date().toISOString(), 2500)
   }
 }, 11, 4)
