@@ -6,13 +6,12 @@ const { broadcast } = require('../lib/ipc')
 
 const topicName = filename => basename(filename).replace('.js', '')
 
-const SENSOR_READ_INTERVAL = 1000 * 60 * 10
+const SENSOR_READ_INTERVAL = 1000 * 60 * 5
 
 const previous = { temperature: undefined, humidity: undefined }
 setImmediate(async function main (model, gpio, { assign } = Object) {
   try {
     const { temperature, humidity } = await read(model, gpio)
-    console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
     setTimeout(main, SENSOR_READ_INTERVAL, model, gpio)
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
       await broadcast(topicName(__filename), { temperature, humidity })
