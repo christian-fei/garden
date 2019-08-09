@@ -30,4 +30,4 @@ process.on('multipleResolves', (type, promise, reason) => {
 process.on('rejectionHandled', (promise) => console.log('-- rejectionHandled', promise))
 process.on('uncaughtException', (err, origin) => console.log('-- uncaughtException', err, origin))
 process.on('unhandledRejection', (reason, promise) => console.log('-- unhandledRejection', promise, reason))
-process.on('warning', (warning) => console.log('-- warning', warn))
+process.on('warning', (warning) => console.log('-- warning', warning))
