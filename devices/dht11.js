@@ -11,9 +11,7 @@ const SENSOR_READ_INTERVAL = 1000 * 60 * 10
 const previous = { temperature: undefined, humidity: undefined }
 setImmediate(async function main (model, gpio, { assign } = Object) {
   try {
-    let { temperature, humidity } = await read(model, gpio)
-    temperature = +(temperature * 100) / 100
-    humidity = +(humidity * 100) / 100
+    const { temperature, humidity } = await read(model, gpio)
     console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
     setTimeout(main, SENSOR_READ_INTERVAL, model, gpio)
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
