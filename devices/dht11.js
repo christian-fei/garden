@@ -4,6 +4,8 @@ const { basename } = require('path')
 const { promises: { read } } = require('node-dht-sensor')
 const { broadcast } = require('../lib/ipc')
 
+const topicName = filename => basename(filename).replace('.js', '')
+
 const SENSOR_READ_INTERVAL = 1000 * 60 * 10
 
 const previous = { temperature: undefined, humidity: undefined }
@@ -15,7 +17,7 @@ setImmediate(async function main (model, gpio, { assign } = Object) {
     console.log('%s | GPIO=%d Temperature=%d°C Humidity=%d%', new Date().toISOString(), gpio, temperature, humidity)
     setTimeout(main, SENSOR_READ_INTERVAL, model, gpio)
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
-      await broadcast(basename(__filename), { temperature, humidity })
+      await broadcast(topicName(__filename), { temperature, humidity })
       assign(previous, { temperature, humidity })
     }
   } catch (err) {
