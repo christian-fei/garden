@@ -12,7 +12,7 @@ const gpio = 4
 const history = temperatureMoistureHistory.read()
 const previous = { temperature: undefined, humidity: undefined }
 
-schedule.scheduleJob('*/1 * * * *', async function () {
+schedule.scheduleJob('*/5 * * * *', async function () {
   try {
     const { temperature, humidity } = await read(model, gpio)
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
