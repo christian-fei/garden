@@ -45,13 +45,19 @@ bot.onText(/\/camera/, ({ chat }) => {
   })
 })
 
-bot.on('callback_query', async ({ id, data }) => {
+bot.on('callback_query', ({ id, data }) => {
+  console.log('/callback_query', data)
+
   if (data === 'take_picture') {
-    console.log('/camera take_picture')
     const camera = new StillCamera()
-    const buffer = await camera.takeImage()
-    bot.answerCallbackQuery(id, buffer)
-    // bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
+    return camera.takeImage()
+      .then(buffer => {
+        bot.answerCallbackQuery(id, buffer)
+        // bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
+      })
+      .catch(() => {
+        bot.answerCallbackQuery(id, 'something failed, please try again later.')
+      })
   }
 })
 
