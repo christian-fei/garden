@@ -12,7 +12,7 @@ const gpio = 4
 const history = temperatureMoistureHistory.read()
 const previous = { temperature: undefined, humidity: undefined }
 
-schedule.scheduleJob('*/5 * * * *', async function () {
+schedule.scheduleJob('*/1 * * * *', async function () {
   try {
     const { temperature, humidity } = await read(model, gpio)
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
@@ -26,6 +26,8 @@ schedule.scheduleJob('*/5 * * * *', async function () {
       const humidityChart = sparkly(history.map((d, i) => [i, d.humidity]))
       process.stdout.write(`\n${temperatureChart}\n`)
       process.stdout.write(`\n${humidityChart}\n`)
+      await broadcast('temperature-history', temperatureChart)
+      await broadcast('humidity-history', humidityChart)
     }
   } catch (err) {
     console.error(err)

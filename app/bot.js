@@ -18,6 +18,12 @@ process.on('message', ({ topic, data }) => {
   if (topic === 'dht11') {
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
   }
+  if (topic === 'temperature-history') {
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Temperature history:\n' + data)
+  }
+  if (topic === 'humidity-history') {
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Humidity history:\n' + data)
+  }
 })
 
 bot.onText(/\/help/, function onHelp ({ chat }) {
