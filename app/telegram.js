@@ -69,13 +69,16 @@ bot.onText(/\/report/, async function onIP ({ chat }) {
   const history = temperatureMoistureHistory.read()
   if (history.length > 3) {
     const weather = await openWeatherMap.weatherFor('Trento')
+    const last = history[history.length - 1]
     const last2h = history.splice(history.length - 24, history.length)
     const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
     const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
     const text = `🌡 Temperature (last 2h)
 ${temperatureChart}
+${last && `${last.temperature}º`}
 💦 Moisture (last 2h)
 ${humidityChart}
+${last && `${last.humidity}%`}
 ${openWeatherMap.toReport(weather).join('\n')}`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
