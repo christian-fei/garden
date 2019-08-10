@@ -51,7 +51,8 @@ Moisture
 ${humidityChart}
 Weather
 ${weather.place}
-${weather.condition.join('\n')}`
+${weather.condition.type}
+${weather.condition.description}`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
 })
