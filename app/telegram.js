@@ -49,13 +49,13 @@ bot.on('callback_query', async ({ id, data }) => {
   console.log('/callback_query', data)
 
   if (data === 'take_picture') {
-    try {
+    // try {
       const camera = new StillCamera()
       const buffer = await camera.takeImage()
-      bot.answerCallbackQuery(id, buffer)
-      bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
-    } catch (e) {
-      bot.answerCallbackQuery(id, 'something went wrong, please try again later...')
+      // bot.answerCallbackQuery(id, buffer)
+      // bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
+    // } catch (e) {
+      // bot.answerCallbackQuery(id, 'something went wrong, please try again later...')
     }
   }
 })
