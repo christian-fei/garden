@@ -65,8 +65,7 @@ bot.onText(/\/report/, async function onIP ({ chat }) {
   const history = temperatureMoistureHistory.read()
   if (history.length > 3) {
     // const weather = await openWeatherMap.weatherFor('Trento')
-    const weatherData = await got(`https://api.openweathermap.org/data/2.5/weather?lat=46.1008181&lon=11.1105323&appid=${process.env.OPEN_WEATHER_MAP_API_KEY}`)
-    console.log('weatherData', weatherData)
+    const {body: weatherData} = await got(`https://api.openweathermap.org/data/2.5/weather?lat=46.1008181&lon=11.1105323&appid=${process.env.OPEN_WEATHER_MAP_API_KEY}`, {json: true})
     const last = history[history.length - 1]
     const last2h = history.splice(history.length - 24, history.length)
     const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
