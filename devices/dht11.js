@@ -17,13 +17,13 @@ schedule.scheduleJob('*/5 * * * *', async function () {
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
       await broadcast(topicName(__filename), { temperature, humidity })
       Object.assign(previous, { temperature, humidity })
-      history.push({ temperature, humidity, date: new Date().toISOString() })
-      if (history.length > 3) {
-        const temperatureChart = sparkly(history.map((d, i) => [i, d.temperature]))
-        const humidityChart = sparkly(history.map((d, i) => [i, d.humidity]))
-        process.stdout.write(`\n${temperatureChart}\n`)
-        process.stdout.write(`\n${humidityChart}\n`)
-      }
+    }
+    history.push({ temperature, humidity, date: new Date().toISOString() })
+    if (history.length > 3) {
+      const temperatureChart = sparkly(history.map((d, i) => [i, d.temperature]))
+      const humidityChart = sparkly(history.map((d, i) => [i, d.humidity]))
+      process.stdout.write(`\n${temperatureChart}\n`)
+      process.stdout.write(`\n${humidityChart}\n`)
     }
   } catch (err) {
     console.error(err)
