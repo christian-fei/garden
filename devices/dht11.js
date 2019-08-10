@@ -13,6 +13,9 @@ schedule.scheduleJob('*/5 * * * *', async function () {
   const { temperature, humidity } = await read(model, gpio)
   Object.assign(previous, { temperature, humidity })
   history.push({ temperature, humidity, date: new Date().toISOString() })
+  if (history.length > 10000) {
+    history.splice(history.length - 10000, history.length)
+  }
   temperatureMoistureHistory.write(history)
 })
 
