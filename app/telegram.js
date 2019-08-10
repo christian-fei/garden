@@ -30,7 +30,7 @@ bot.onText(/\/camera/, ({ chat }) => {
     reply_markup: {
       inline_keyboard: [[{
         text: 'take picture',
-        callback_data: 'take_picutre'
+        callback_data: 'take_picture'
       // }, {
       //   text: 'take 1 min video',
       //   callback_data: 'take_video_1m'
