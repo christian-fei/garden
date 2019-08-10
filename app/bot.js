@@ -3,6 +3,7 @@ require('dotenv').config()
 
 const TelegramBot = require('node-telegram-bot-api')
 const {publicIP} = require('../lib/ip')
+const camera = require('../lib/camera')
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true })
 const reboot = [
   'sorry, i\'ve been rebooting again',
@@ -36,6 +37,10 @@ process.on('message', ({ topic, data }) => {
 
 bot.onText(/\/ip/, async function onIP ({ chat }) {
   bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `My Public IP is ${await publicIP()} 🌍`)
+})
+bot.onText(/\/camera/, async function onIP ({ chat }) {
+  const buffer = await camera.readCurrentSnapshot()
+  bot.sendPhoto(process.env.TELEGRAM_CHAT_ID, buffer)
 })
 bot.onText(/\/help/, function onHelp ({ chat }) {
   bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'How may i help you?', {
