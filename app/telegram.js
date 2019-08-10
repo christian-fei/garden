@@ -75,9 +75,9 @@ ${last && `${last.temperature}º`}
 ${humidityChart}
 ${last && `${last.humidity}%`}
 🌦 Weather (last updated ${new Date(weatherData.dt * 1000 + 1000 * 60 * 60 * 2).toISOString()})
+Condition: ${weatherData.weather[0] && weatherData.weather[0].description}
 Sunrise ${new Date(weatherData.sys.sunrise * 1000 + 1000 * 60 * 60 * 2).toISOString()}
 Sunset ${new Date(weatherData.sys.sunset * 1000 + 1000 * 60 * 60 * 2).toISOString()}
-Condition: ${weatherData.weather[0] && weatherData.weather[0].description}
 Temp station: ${weatherData.main.temp} (min ${weatherData.main.temp_min} - ${weatherData.main.temp_max})`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
