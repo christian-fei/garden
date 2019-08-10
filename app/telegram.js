@@ -78,7 +78,7 @@ ${last && `${last.humidity}%`}
 Condition: ${weatherData.weather[0] && weatherData.weather[0].description}
 Sunrise ${new Date(weatherData.sys.sunrise * 1000 + 1000 * 60 * 60 * 2).toISOString()}
 Sunset ${new Date(weatherData.sys.sunset * 1000 + 1000 * 60 * 60 * 2).toISOString()}
-Temp station: ${weatherData.main.temp} (min ${weatherData.main.temp_min} - ${weatherData.main.temp_max})`
+Temp station: ${(weatherData.main.temp - 273.15).toFixed(1)} (min ${(weatherData.main.temp_min - 273.15).toFixed(1)} - ${(weatherData.main.temp_max - 273.15).toFixed(1)})`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
 /*
