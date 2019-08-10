@@ -26,11 +26,8 @@ process.on('message', ({ topic, data }) => {
   if (topic === 'dht11') {
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
   }
-  if (topic === 'temperature-history') {
-    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Temperature history:\n' + data)
-  }
-  if (topic === 'humidity-history') {
-    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Humidity history:\n' + data)
+  if (topic === 'summary') {
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, '# History\n## Temperature\n' + data.temperatureHistory + '\n## Moisture\n' + data.moistureHistory, '\n## Previous\n' + JSON.stringify(data.previous))
   }
 })
 
