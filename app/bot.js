@@ -50,11 +50,23 @@ bot.on('callback_query', (...args) => {
 })
 
 bot.onText(/\/report/, async function onIP ({ chat }) {
+  const history = temperatureMoistureHistory.read()
+  if (history.length > 3) {
+    const weather = await openWeatherMap.weatherFor('Trento')
+    const last2h = history.splice(history.length - 24, history.length)
+    const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
+    const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
+    const text = `🌡 Temperature (last 2h)
+${temperatureChart}
+💦 Moisture (last 2h)
+${humidityChart}
+${openWeatherMap.toReport(weather).join('\n')}`
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
+  }
 /*
 
   Daily Followup
   ---
-
   Currently {description}, temperature is {temperature}°C with relative
   humidity of about {humidity}%.
 
@@ -73,75 +85,7 @@ bot.onText(/\/report/, async function onIP ({ chat }) {
   lasted {5 minutes}. According to watering schedule next watering
   is (tomorrow|2019-05-12 at 9:00|18:00).
 */
-  const history = temperatureMoistureHistory.read()
-  if (history.length > 3) {
-    const weather = await openWeatherMap.weatherFor('Trento')
-    const last2h = history.splice(history.length - 24, history.length)
-    const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
-    const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
-<<<<<<< HEAD
-    const text = `🌡 Temperature (last 2h)
-${temperatureChart}
-💦 Moisture (last 2h)
-${humidityChart}
-${openWeatherMap.toReport(weather).join('\n')}`
-=======
-    const text = `🌡 Temperature\n${temperatureChart}\n💦 Moisture\n${humidityChart}\n🌦 Weather\n${weather.place}\n${weather.condition.type}\n${weather.condition.description}`
->>>>>>> updates report and removes stuff
-    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
-  }
 })
-
-// const file = 'image/jpg;base64,iVBORw0KGgoAAAANSUh...'
-// const fileOpts = {
-//   filename: 'image',
-//   contentType: 'image/jpg'
-// }
-//  bot.sendPhoto(chatId, Buffer.from(file.substr(17), 'base64'), fileOpts)
-
-// when bot gets added to other groups exit immediatly
-
-// const file = 'image/jpg;base64,iVBORw0KGgoAAAANSUh...';
-// const fileOpts = {
-//   filename: 'image',
-//   contentType: 'image/jpg',
-//  };
-
-// bot.sendPhoto(chatId, Buffer.from(file.substr(17), 'base64'), fileOpts);
-
-// const reboot = [
-//   'sorry, i\'ve been rebooting again',
-//   'i have been rebooting',
-//   '...booted!',
-//   'ready!',
-//   'back online!'
-// ]
-
-// bot.sendMessage(TELEGRAM_CHAT_ID, reboot[~~(reboot.length * Math.random())])
-
-// process.on('message', ({ topic, data }) => {
-//   console.log('topic', topic)
-//   if (topic === 'dht11') {
-//     bot.sendMessage(TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
-//   }
-// })
-
-// bot.onText(/\/help/, function onHelp ({ chat }) {
-//   bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', {
-//     reply_markup: {
-//       inline_keyboard: [[
-//         {
-//           text: 'A',
-//           callback_data: 'A1'
-//         },
-//         {
-//           text: 'B',
-//           callback_data: 'C1'
-//         }]
-//       ]
-//     }
-//   })
-// })
 
 // bot.on('message', (...args) => console.log('message', ...args))
 // bot.on('text', (...args) => console.log('text', ...args))
