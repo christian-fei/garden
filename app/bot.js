@@ -2,6 +2,7 @@ process.env.NTBA_FIX_319 = 1
 require('dotenv').config()
 
 const TelegramBot = require('node-telegram-bot-api')
+const openWeatherMap = require('open-weather-map-cli')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const sparkly = require('sparkly')
 const {publicIP} = require('../lib/ip')
@@ -40,13 +41,16 @@ bot.onText(/\/camera/, async function onIP ({ chat }) {
 bot.onText(/\/report/, async function onIP ({ chat }) {
   const history = temperatureMoistureHistory.read()
   if (history.length > 3) {
+    const weather = await openWeatherMap.weatherFor('Trento')
     const last2h = history.splice(history.length - 24, history.length)
     const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
     const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
     const text = `Temperature
 ${temperatureChart}
 Moisture
-${humidityChart}`
+${humidityChart}
+Weather
+${weather}`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
 })
