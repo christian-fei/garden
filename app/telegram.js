@@ -4,7 +4,6 @@ require('dotenv').config()
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 
 const TelegramBot = require('node-telegram-bot-api')
-const openWeatherMap = require('open-weather-map-cli')
 const got = require('got')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const sparkly = require('sparkly')
@@ -64,7 +63,6 @@ bot.on('callback_query', async (query) => {
 bot.onText(/\/report/, async function onIP ({ chat }) {
   const history = temperatureMoistureHistory.read()
   if (history.length > 3) {
-    // const weather = await openWeatherMap.weatherFor('Trento')
     const {body: weatherData} = await got(`https://api.openweathermap.org/data/2.5/weather?lat=46.1008181&lon=11.1105323&appid=${process.env.OPEN_WEATHER_MAP_API_KEY}`, {json: true})
     const last = history[history.length - 1]
     const last2h = history.splice(history.length - 24, history.length)
