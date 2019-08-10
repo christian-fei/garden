@@ -19,24 +19,25 @@ schedule.scheduleJob('*/5 * * * *', async function () {
     }
     history.push({ temperature, humidity, date: new Date().toISOString() })
     temperatureMoistureHistory.write(history)
+
+    if (history.length > 3) {
+      const last2h = history.splice(history.length - 24, history.length)
+      const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
+      const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
+      await broadcast('summary', {
+        previous,
+        temperatureChart,
+        humidityChart
+      })
+    }
   } catch (err) {
     console.error(err)
   }
 })
 
 // schedule.scheduleJob('0 * * * *', async function () {
-schedule.scheduleJob('*/30 * * * *', async function () {
-  if (history.length > 3) {
-    const last2h = history.splice(history.length - 24, history.length)
-    const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
-    const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
-    await broadcast('summary', {
-      previous,
-      temperatureChart,
-      humidityChart
-    })
-  }
-})
+// schedule.scheduleJob('*/30 * * * *', async function () {
+// })
 
 process.on('beforeExit', (code) => console.log('-- beforeExit with code: ', code))
 process.on('disconnect', () => console.log('-- disconnet'))
