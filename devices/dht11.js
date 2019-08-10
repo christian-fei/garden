@@ -4,6 +4,7 @@ const { basename } = require('path')
 const { promises: { read } } = require('node-dht-sensor')
 const { broadcast } = require('../lib/ipc')
 const schedule = require('node-schedule')
+const babar = require('babar')
 const topicName = filename => basename(filename).replace('.js', '')
 
 const model = 11
@@ -18,6 +19,12 @@ schedule.scheduleJob('*/5 * * * *', async function () {
       await broadcast(topicName(__filename), { temperature, humidity })
       Object.assign(previous, { temperature, humidity })
       history.push({ temperature, humidity, date: new Date().toISOString() })
+      if (history.length > 3) {
+        const temperatureChart = babar(history.map((d, i) => [i, d.temperature]))
+        const humidityChart = babar(history.map((d, i) => [i, d.humidity]))
+        process.stdout.write(`\n${temperatureChart}\n`)
+        process.stdout.write(`\n${humidityChart}\n`)
+      }
     }
   } catch (err) {
     console.error(err)
