@@ -9,9 +9,7 @@ const {publicIP} = require('../lib/ip')
 const camera = require('../lib/camera')
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true })
 const reboot = [
-  'sorry, i\'ve been rebooting again',
-  'i have been rebooting',
-  '...booted!',
+  '...booted up!',
   'ready!',
   'back online!'
 ]
@@ -21,7 +19,7 @@ setImmediate(async () => {
   try {
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `My Public IP is ${await publicIP()} 🌍`)
   } catch (err) {
-    console.error()
+    console.error(err)
   }
 })
 
