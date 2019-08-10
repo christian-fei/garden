@@ -49,7 +49,7 @@ bot.on('callback_query', async ({ id, data }) => {
   if (data === 'take_picture') {
     console.log('/camera take_picture')
     const camera = new StillCamera()
-    const buffer = camera.takeImage()
+    const buffer = await camera.takeImage()
     bot.answerCallbackQuery(id, buffer)
     // bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
   }
