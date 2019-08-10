@@ -34,6 +34,9 @@ process.on('message', ({ topic, data }) => {
   }
 })
 
+bot.onText(/\/ip/, async function onIP ({ chat }) {
+  bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `My Public IP is ${await publicIP()} 🌍`)
+})
 bot.onText(/\/help/, function onHelp ({ chat }) {
   bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'How may i help you?', {
     reply_markup: {
