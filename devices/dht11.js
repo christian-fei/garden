@@ -24,7 +24,8 @@ schedule.scheduleJob('*/5 * * * *', async function () {
   }
 })
 
-schedule.scheduleJob('0 * * * *', async function () {
+// schedule.scheduleJob('0 * * * *', async function () {
+schedule.scheduleJob('*/10 * * * *', async function () {
   if (history.length > 3) {
     const temperatureChart = sparkly(history.map((d, i) => d.temperature).splice(history.length - 10, history.length))
     const humidityChart = sparkly(history.map((d, i) => d.humidity).splice(history.length - 10, history.length))
