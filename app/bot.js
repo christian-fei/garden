@@ -45,9 +45,9 @@ bot.onText(/\/report/, async function onIP ({ chat }) {
     const last2h = history.splice(history.length - 24, history.length)
     const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
     const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
-    const text = `🌡 Temperature
+    const text = `🌡 Temperature (last 2h)
 ${temperatureChart}
-💦 Moisture
+💦 Moisture (last 2h)
 ${humidityChart}
 🌦 Weather
 ${weather.place}
