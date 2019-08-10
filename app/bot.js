@@ -15,7 +15,7 @@ const reboot = [
 setImmediate(async () => {
   bot.sendMessage(process.env.TELEGRAM_CHAT_ID, reboot[~~(reboot.length * Math.random())])
   try {
-    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `My Public IP is ${await publicIP()}`)
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `My Public IP is ${await publicIP()} 🌍`)
   } catch (err) {
     console.error()
   }
