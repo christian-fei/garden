@@ -48,9 +48,7 @@ ${temperatureChart}
 💦 Moisture (last 2h)
 ${humidityChart}
 🌦 Weather
-${weather.place}
-${weather.condition.type}
-${weather.condition.description}`
+${openWeatherMap.toReport(weather)}`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
 })
