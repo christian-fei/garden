@@ -48,7 +48,7 @@ bot.onText(/\/camera/, ({ chat }) => {
 bot.on('callback_query', async ({ id, data }) => {
   console.log('/callback_query', data)
 
-  if (data === 'take_picutre') {
+  if (data === 'take_picture') {
     try {
       const camera = new StillCamera()
       const buffer = await camera.takeImage()
