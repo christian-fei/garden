@@ -4,9 +4,8 @@ const { basename } = require('path')
 const { promises: { read } } = require('node-dht-sensor')
 const { broadcast } = require('../lib/ipc')
 const schedule = require('node-schedule')
-const babar = require('babar')
+const sparkly = require('sparkly')
 const topicName = filename => basename(filename).replace('.js', '')
-
 const model = 11
 const gpio = 4
 const history = []
@@ -20,8 +19,8 @@ schedule.scheduleJob('*/5 * * * *', async function () {
       Object.assign(previous, { temperature, humidity })
       history.push({ temperature, humidity, date: new Date().toISOString() })
       if (history.length > 3) {
-        const temperatureChart = babar(history.map((d, i) => [i, d.temperature]))
-        const humidityChart = babar(history.map((d, i) => [i, d.humidity]))
+        const temperatureChart = sparkly(history.map((d, i) => [i, d.temperature]))
+        const humidityChart = sparkly(history.map((d, i) => [i, d.humidity]))
         process.stdout.write(`\n${temperatureChart}\n`)
         process.stdout.write(`\n${humidityChart}\n`)
       }
