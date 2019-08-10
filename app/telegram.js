@@ -5,6 +5,7 @@ const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 
 const TelegramBot = require('node-telegram-bot-api')
 const openWeatherMap = require('open-weather-map-cli')
+const got = require('got')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const sparkly = require('sparkly')
 
@@ -63,7 +64,8 @@ bot.on('callback_query', async (query) => {
 bot.onText(/\/report/, async function onIP ({ chat }) {
   const history = temperatureMoistureHistory.read()
   if (history.length > 3) {
-    const weather = await openWeatherMap.weatherFor('Trento')
+    // const weather = await openWeatherMap.weatherFor('Trento')
+    const weatherData = await got(`https://api.openweathermap.org/data/2.5/weather?lat=46.1008181&lon=11.1105323&appid=${process.env.OPEN_WEATHER_MAP_API_KEY}`)
     const last = history[history.length - 1]
     const last2h = history.splice(history.length - 24, history.length)
     const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
@@ -74,7 +76,11 @@ ${last && `${last.temperature}º`}
 💦 Moisture (last 2h)
 ${humidityChart}
 ${last && `${last.humidity}%`}
-${openWeatherMap.toReport(weather).join('\n')}`
+🌦 Weather (last updated ${new Date(weatherData.dt * 1000 + 1000 * 60 * 60 * 2).toISOString()})
+Sunrise ${new Date(weatherData.sys.sunrise * 1000 + 1000 * 60 * 60 * 2).toISOString()})
+Sunset ${new Date(weatherData.sys.sunset * 1000 + 1000 * 60 * 60 * 2).toISOString()})
+Condition: ${weatherData.weather.description}
+Temp station: ${weatherData.main.temp} (min ${weatherData.main.temp_min} - ${weatherData.main.temp_max})`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
 /*
