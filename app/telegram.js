@@ -33,11 +33,11 @@ bot.onText(/\/camera/, ({ chat }) => {
         text: 'take picture',
         callback_data: 'take_picture'
       }, {
+        text: 'take video (30s)',
+        callback_data: 'take_video_30s'
+      }, {
         text: 'take video (1m)',
         callback_data: 'take_video_1m'
-      }, {
-        text: 'take video (5m)',
-        callback_data: 'take_video_5m'
       }]]
     }
   })
@@ -49,7 +49,7 @@ bot.on('callback_query', async (query) => {
 
   if (data === 'take_picture') {
     bot.answerCallbackQuery(id, { text: 'Taking picture!' })
-    bot.editMessageReplyMarkup({ inline_keyboard: [[]] }, message)
+    bot.editMessageReplyMarkup({ inline_keyboard: [[]] }, { message_id: message.message_id })
     // keyboard = [[InlineKeyboardButton('UnAck', callback_data = '1')]]
     // reply_markup = InlineKeyboardMarkup(keyboard)
 
