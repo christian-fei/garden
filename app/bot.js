@@ -47,8 +47,7 @@ bot.onText(/\/report/, async function onIP ({ chat }) {
 ${temperatureChart}
 💦 Moisture (last 2h)
 ${humidityChart}
-🌦 Weather
-${openWeatherMap.toReport(weather)}`
+${openWeatherMap.toReport(weather).join('\n')}`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
 })
