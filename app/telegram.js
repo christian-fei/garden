@@ -45,14 +45,19 @@ bot.onText(/\/camera/, ({ chat }) => {
   })
 })
 
-bot.on('callback_query', async ({ id, data }) => {
-  console.log('/callback_query', data)
+bot.on('callback_query', async (query) => {
+  const { id, data } = query
+  console.log('/callback_query', data, query)
 
   if (data === 'take_picture') {
-    // try {
+    // bot.editMessageReplyMarkup(id, query.message.message_id, [])
+    bot.answerCallbackQuery(id, { text: 'working on it' })
+    // keyboard = [[InlineKeyboardButton('UnAck', callback_data = '1')]]
+    // reply_markup = InlineKeyboardMarkup(keyboard)
+
     const camera = new StillCamera()
     const buffer = await camera.takeImage()
-    // bot.answerCallbackQuery(id, buffer)
+
     bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
     // } catch (e) {
     // bot.answerCallbackQuery(id, 'something went wrong, please try again later...')
