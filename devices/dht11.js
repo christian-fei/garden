@@ -20,8 +20,8 @@ schedule.scheduleJob('*/5 * * * *', async function () {
     history.push({ temperature, humidity, date: new Date().toISOString() })
     temperatureMoistureHistory.write(history)
     if (history.length > 3) {
-      const temperatureChart = sparkly(history.map((d, i) => d.temperature))
-      const humidityChart = sparkly(history.map((d, i) => d.humidity))
+      const temperatureChart = sparkly(history.map((d, i) => d.temperature).splice(history.length - 10, history.length))
+      const humidityChart = sparkly(history.map((d, i) => d.humidity).splice(history.length - 10, history.length))
       process.stdout.write(`\n${temperatureChart}\n`)
       process.stdout.write(`\n${humidityChart}\n`)
       await broadcast('temperature-history', temperatureChart)
