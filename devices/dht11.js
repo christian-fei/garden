@@ -3,7 +3,6 @@
 const { promises: { read } } = require('node-dht-sensor')
 const { broadcast } = require('../lib/ipc')
 const schedule = require('node-schedule')
-const sparkly = require('sparkly')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const model = 11
 const gpio = 4
@@ -19,17 +18,6 @@ schedule.scheduleJob('*/5 * * * *', async function () {
     }
     history.push({ temperature, humidity, date: new Date().toISOString() })
     temperatureMoistureHistory.write(history)
-
-    if (history.length > 3) {
-      const last2h = history.splice(history.length - 24, history.length)
-      const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
-      const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
-      await broadcast('summary', {
-        previous,
-        temperatureChart,
-        humidityChart
-      })
-    }
   } catch (err) {
     console.error(err)
   }

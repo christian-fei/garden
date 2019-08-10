@@ -2,6 +2,8 @@ process.env.NTBA_FIX_319 = 1
 require('dotenv').config()
 
 const TelegramBot = require('node-telegram-bot-api')
+const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
+const sparkly = require('sparkly')
 const {publicIP} = require('../lib/ip')
 const camera = require('../lib/camera')
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true })
@@ -26,9 +28,6 @@ process.on('message', ({ topic, data }) => {
   if (topic === 'dht11') {
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
   }
-  if (topic === 'summary') {
-    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, '# History\n## Temperature\n' + data.temperatureHistory + '\n## Moisture\n' + data.moistureHistory, '\n## Previous\n' + JSON.stringify(data.previous))
-  }
 })
 
 bot.onText(/\/ip/, async function onIP ({ chat }) {
@@ -37,6 +36,20 @@ bot.onText(/\/ip/, async function onIP ({ chat }) {
 bot.onText(/\/camera/, async function onIP ({ chat }) {
   const buffer = await camera.readCurrentSnapshot()
   bot.sendPhoto(process.env.TELEGRAM_CHAT_ID, buffer)
+})
+bot.onText(/\/report/, async function onIP ({ chat }) {
+  const history = temperatureMoistureHistory.read()
+  if (history.length > 3) {
+    const last2h = history.splice(history.length - 24, history.length)
+    const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
+    const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
+    const text = `# Report
+## Temperature
+${temperatureChart}
+## Moisture
+${humidityChart}`
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
+  }
 })
 bot.onText(/\/help/, function onHelp ({ chat }) {
   bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'How may i help you?', {
