@@ -8,6 +8,8 @@ const openWeatherMap = require('open-weather-map-cli')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const sparkly = require('sparkly')
 
+const { StillCamera } = require('pi-camera-connect')
+
 const { publicIP } = require('../lib/ip')
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true })
 
@@ -42,11 +44,12 @@ bot.onText(/\/camera/, ({ chat }) => {
   })
 })
 
-// const buffer = await camera.readCurrentSnapshot()
-// bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
-
-bot.on('callback_query', (...args) => {
-  console.log('callback_query', args)
+bot.on('callback_query', async ({ id, data }) => {
+  if (data === 'take_picture') {
+    const stillCamera = new StillCamera()
+    bot.answerCallbackQuery(id)
+    bot.sendPhoto(TELEGRAM_CHAT_ID, await stillCamera.takeImage())
+  }
 })
 
 bot.onText(/\/report/, async function onIP ({ chat }) {
