@@ -8,6 +8,7 @@ const topicName = filename => basename(filename).replace('.js', '')
 
 const model = 11
 const gpio = 4
+const history = []
 const previous = { temperature: undefined, humidity: undefined }
 
 schedule.scheduleJob('*/5 * * * *', async function () {
@@ -16,6 +17,7 @@ schedule.scheduleJob('*/5 * * * *', async function () {
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
       await broadcast(topicName(__filename), { temperature, humidity })
       Object.assign(previous, { temperature, humidity })
+      history.push({ temperature, humidity, date: new Date().toISOString() })
     }
   } catch (err) {
     console.error(err)
