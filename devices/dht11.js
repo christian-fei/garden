@@ -12,9 +12,7 @@ const previous = { temperature: undefined, humidity: undefined }
 schedule.scheduleJob('*/5 * * * *', async function () {
   try {
     const { temperature, humidity } = await read(model, gpio)
-    if (previous.temperature !== temperature || previous.humidity !== humidity) {
-      Object.assign(previous, { temperature, humidity })
-    }
+    Object.assign(previous, { temperature, humidity })
     history.push({ temperature, humidity, date: new Date().toISOString() })
     temperatureMoistureHistory.write(history)
   } catch (err) {
