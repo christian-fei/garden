@@ -2,6 +2,7 @@ process.env.NTBA_FIX_319 = 1
 require('dotenv').config()
 
 const TelegramBot = require('node-telegram-bot-api')
+const {publicIP} = require('../lib/ip')
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true })
 const reboot = [
   'sorry, i\'ve been rebooting again',
@@ -11,7 +12,14 @@ const reboot = [
   'back online!'
 ]
 
-bot.sendMessage(process.env.TELEGRAM_CHAT_ID, reboot[~~(reboot.length * Math.random())])
+setImmediate(async () => {
+  bot.sendMessage(process.env.TELEGRAM_CHAT_ID, reboot[~~(reboot.length * Math.random())])
+  try {
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `My Public IP is ${await publicIP()}`)
+  } catch (err) {
+    console.error()
+  }
+})
 
 process.on('message', ({ topic, data }) => {
   console.log('topic', topic)
