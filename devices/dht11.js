@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 
-const { basename } = require('path')
 const { promises: { read } } = require('node-dht-sensor')
 const { broadcast } = require('../lib/ipc')
 const schedule = require('node-schedule')
 const sparkly = require('sparkly')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
-const topicName = filename => basename(filename).replace('.js', '')
 const model = 11
 const gpio = 4
 const history = temperatureMoistureHistory.read()
@@ -16,7 +14,7 @@ schedule.scheduleJob('*/5 * * * *', async function () {
   try {
     const { temperature, humidity } = await read(model, gpio)
     if (previous.temperature !== temperature || previous.humidity !== humidity) {
-      await broadcast(topicName(__filename), { temperature, humidity })
+      await broadcast('dht11', { temperature, humidity })
       Object.assign(previous, { temperature, humidity })
     }
     history.push({ temperature, humidity, date: new Date().toISOString() })
