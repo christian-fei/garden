@@ -28,5 +28,8 @@
     "open-weather-map-cli": "^1.5.10",
     "pm2": "^3.5.1",
     "sparkly": "^5.0.0"
+  },
+  "devDependencies": {
+    "pi-camera-connect": "^0.2.0"
   }
 }
