@@ -43,10 +43,9 @@ bot.onText(/\/report/, async function onIP ({ chat }) {
     const last2h = history.splice(history.length - 24, history.length)
     const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
     const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
-    const text = `# Report
-## Temperature
+    const text = `Temperature
 ${temperatureChart}
-## Moisture
+Moisture
 ${humidityChart}`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
