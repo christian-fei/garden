@@ -31,33 +31,28 @@ bot.onText(/\/camera/, ({ chat }) => {
       inline_keyboard: [[{
         text: 'take picture',
         callback_data: 'take_picture'
-      // }, {
-      //   text: 'take 1 min video',
-      //   callback_data: 'take_video_1m'
-      // }, {
-      //   text: 'take 2 min video',
-      //   callback_data: 'take_video_2m'
-      // }, {
-      //   text: 'take 5 min video ',
-      //   callback_data: 'take_video_5m'
+      }, {
+        text: 'take video (1m)',
+        callback_data: 'take_video_1m'
+      }, {
+        text: 'take video (5m)',
+        callback_data: 'take_video_5m'
       }]]
     }
   })
 })
 
 bot.on('callback_query', async (query) => {
-  const { id, data } = query
+  const { id, data, message } = query
   console.log('/callback_query', data, query)
 
   if (data === 'take_picture') {
-    // bot.editMessageReplyMarkup(id, query.message.message_id, [])
-    bot.answerCallbackQuery(id, { text: 'working on it' })
+    bot.answerCallbackQuery(id, { text: 'Taking picture!' })
+    bot.editMessageReplyMarkup([], message)
     // keyboard = [[InlineKeyboardButton('UnAck', callback_data = '1')]]
     // reply_markup = InlineKeyboardMarkup(keyboard)
 
-    const camera = new StillCamera()
-    const buffer = await camera.takeImage()
-
+    const buffer = await new StillCamera().takeImage()
     bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
     // } catch (e) {
     // bot.answerCallbackQuery(id, 'something went wrong, please try again later...')
