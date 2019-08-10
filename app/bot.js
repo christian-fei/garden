@@ -50,7 +50,8 @@ ${temperatureChart}
 Moisture
 ${humidityChart}
 Weather
-${weather}`
+${weather.place}
+${weather.condition}`
     bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
   }
 })
