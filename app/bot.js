@@ -25,6 +25,7 @@ bot.onText(/\/ip/, async function onIP ({ chat }) {
 })
 
 bot.onText(/\/camera/, ({ chat }) => {
+  console.log('/camera awaiting full command...')
   bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', {
     reply_markup: {
       inline_keyboard: [[{
@@ -46,9 +47,10 @@ bot.onText(/\/camera/, ({ chat }) => {
 
 bot.on('callback_query', async ({ id, data }) => {
   if (data === 'take_picture') {
-    const stillCamera = new StillCamera()
+    console.log('/camera take_picture')
+    const imageBuffer = new StillCamera().takeImage()
     bot.answerCallbackQuery(id)
-    bot.sendPhoto(TELEGRAM_CHAT_ID, await stillCamera.takeImage())
+    bot.sendPhoto(TELEGRAM_CHAT_ID, imageBuffer)
   }
 })
 
