@@ -41,7 +41,7 @@ schedule.scheduleJob('*/30 * * * *', async function () {
 process.on('beforeExit', (code) => console.log('-- beforeExit with code: ', code))
 process.on('disconnect', () => console.log('-- disconnet'))
 process.on('exit', (code) => console.log('-- exit with code: ', code))
-process.on('message', (message) => console.log('-- message', message))
+// process.on('message', (message) => console.log('-- message', message))
 process.on('multipleResolves', (type, promise, reason) => {
   console.error('-- multipleResolves', type, promise, reason)
   setImmediate(() => process.exit(1))
