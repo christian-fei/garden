@@ -26,8 +26,8 @@ module.exports = {
       NODE_ENV: 'production'
     }
   }, {
-    name: 'bot',
-    script: 'app/bot.js',
+    name: 'telegram',
+    script: 'app/telegram.js',
     exec_mode: 'fork',
     instances: 1,
     restart_delay: 3000,
@@ -42,8 +42,7 @@ module.exports = {
   deploy: {
     production: {
       user: 'pi',
-      // host: '192.168.1.110',
-      host: '151.62.218.46',
+      host: '192.168.1.110',
       ref: 'origin/master',
       repo: 'git@github.com:christian-fei/garden.git',
       path: '/home/pi/garden',
