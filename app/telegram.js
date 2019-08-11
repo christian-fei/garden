@@ -13,19 +13,25 @@ const bot = new Telegram(TELEGRAM_TOKEN, { polling: true })
 
 // todo: make something that accepts messages only from garden group
 
-process.on('message', ({ topic, data }) => {
+process.on('message', ({ topic, data, chat: { id: chat_id } }) => {
   if (topic === 'dht11') {
-    bot.sendMessage(TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
+    bot.sendMessage(chat_id, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
   }
 })
 
-bot.onText(/\/ip/, async ({ chat }) => {
-  bot.sendMessage(TELEGRAM_CHAT_ID, `DMZ Public IP is ${await gatherIP()} 🌍`)
+bot.onText(/\/ip/, async ({ chat: { id: chat_id } }) => {
+  try {
+    const address = await gatherIP()
+    console.log('/ip', address)
+    bot.sendMessage(chat_id, `Public DMZ IP is ${address} 🌍`)
+  } catch (err) {
+    bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+  }
 })
 
-bot.onText(/\/camera/, ({ chat }) => {
+bot.onText(/\/camera/, ({ chat: { id: chat_id } }) => {
   console.log('/camera [...awaiting choice]')
-  bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', { reply_markup: { inline_keyboard: [[{ text: 'take photo', callback_data: 'take_photo' }], [{ text: 'take video', callback_data: 'take_video' }]] } })
+  bot.sendMessage(chat_id, 'How may i help you?', { reply_markup: { inline_keyboard: [[{ text: 'take photo', callback_data: 'take_photo' }], [{ text: 'take video', callback_data: 'take_video' }]] } })
 })
 
 bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: chat_id } } }) => {
@@ -54,8 +60,8 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
   }
 })
 
-bot.onText(/\/report/, async ({ chat }) => {
-  bot.sendMessage(process.env.TELEGRAM_CHAT_ID, await gatherReport(chat))
+bot.onText(/\/report/, async ({ chat: { chat_id } }) => {
+  bot.sendMessage(chat_id, await gatherReport())
   /*
     Daily Followup
     ---
