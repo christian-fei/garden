@@ -65,7 +65,6 @@ bot.on('callback_query', async (query) => {
       await new Promise(resolve => setTimeout(resolve, 5000))
       await camera.stopCapture()
       bot.sendVideo(chat_id, stream, {}, {
-        filename: 'snapshot',
         contentType: 'video/x-motion-jpeg'
       })
     } catch (err) {
