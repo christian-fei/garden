@@ -5,7 +5,7 @@ require('dotenv').config()
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 
 const { createWriteStream } = require('fs')
-const { uuid } = require('m.uuid')
+const { file } = require('tmp')
 
 const TelegramBot = require('node-telegram-bot-api')
 const got = require('got')
@@ -59,23 +59,29 @@ bot.on('callback_query', async (query) => {
     }
   }
   if (data === 'take_video') {
-    try {
-      bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
-      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
+    file(async function (err, path, fd, cleanup) {
+      try {
+        if (err) throw err
+        bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
+        bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
-      const camera = new StreamCamera({ codec: MJPEG })
-      const stream = camera.createStream()
-      const filename = path.join('/tmp', uuid())
+        const camera = new StreamCamera({ codec: H264 })
+        const readable = camera.createStream()
+        const writable = createWriteStream(path)
 
-      stream.pipe(createWriteStream(filename))
+        readable.pipe(writable)
 
-      await camera.startCapture()
-      await new Promise(resolve => setTimeout(resolve, 5000))
-      await camera.stopCapture()
-      bot.sendVideo(chat_id, filename, {}, { contentType: 'video/x-motion-jpeg' })
-    } catch (err) {
-      bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
-    }
+        await camera.startCapture()
+        await new Promise(resolve => setTimeout(resolve, 5000))
+        await camera.stopCapture()
+
+        bot.sendVideo(chat_id, path, {}, { contentType: 'video/H264' })
+      } catch (err) {
+        bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
+      } finally {
+        cleanup()
+      }
+    })
   }
 })
 
