@@ -62,13 +62,14 @@ bot.on('callback_query', async (query) => {
       const camera = new StreamCamera({ codec: MJPEG })
       const stream = camera.createStream()
 
+      camera.pipe(process.stdout)
+
       bot.sendVideo(chat_id, stream, {}, {
         filename: 'snapshot',
         contentType: 'video/x-motion-jpeg'
       })
 
       await camera.startCapture()
-      stream.resume()
       await new Promise(resolve => setTimeout(resolve, 5000))
       await camera.stopCapture()
     } catch (err) {
