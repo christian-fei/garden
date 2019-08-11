@@ -4,10 +4,14 @@ process.env.NTBA_FIX_319 = 1
 require('dotenv').config()
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 
+const { createWriteStream } = require('fs')
+const { uuid } = require('m.uuid')
+
 const TelegramBot = require('node-telegram-bot-api')
 const got = require('got')
-const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
+const path = require('path')
 const sparkly = require('sparkly')
+const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 
 const { Codec: { H264, MJPEG }, StreamCamera, StillCamera } = require('pi-camera-connect')
 
@@ -60,13 +64,15 @@ bot.on('callback_query', async (query) => {
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
       const camera = new StreamCamera({ codec: H264 })
-
       const stream = camera.createStream()
+      const filename = path.join('/tmp', uuid())
+
+      stream.pipe(createWriteStream(filename))
 
       await camera.startCapture()
-      bot.sendVideo(chat_id, stream, {}, { contentType: 'video/H264' })
       await new Promise(resolve => setTimeout(resolve, 5000))
       await camera.stopCapture()
+      bot.sendVideo(chat_id, filename, {}, { contentType: 'video/H264' })
     } catch (err) {
       bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
     }
@@ -76,6 +82,7 @@ bot.on('callback_query', async (query) => {
 bot.onText(/\/report/, async function onIP ({ chat }) {
   const history = temperatureMoistureHistory.read()
   if (history.length > 3) {
+    // fixme: await ../lib/get('https://api.openweathermap.org/data/2.5/weather', { lat: 46.1008181, lon: 11.1105323, appid: process.env.OPEN_WEATHER_MAP_API_KEY })
     const { body: weatherData } = await got(`https://api.openweathermap.org/data/2.5/weather?lat=46.1008181&lon=11.1105323&appid=${process.env.OPEN_WEATHER_MAP_API_KEY}`, { json: true })
     const last = history[history.length - 1]
     const last2h = history.splice(history.length - 24, history.length)
