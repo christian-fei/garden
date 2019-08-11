@@ -26,7 +26,7 @@ bot.onText(/\/ip/, async ({ chat: { id: chat_id } }) => {
     bot.sendMessage(chat_id, `Public DMZ IP is ${address} 🌍`)
   } catch (err) {
     console.error(err)
-    bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+    bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
   }
 })
 
@@ -35,7 +35,7 @@ bot.onText(/\/report/, async ({ chat: { id: chat_id } }) => {
     bot.sendMessage(chat_id, await gatherReport())
   } catch (err) {
     console.error(err)
-    bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+    bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
   }
   /*
     Daily Followup
@@ -76,7 +76,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
       console.error(err)
-      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+      bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
     }
   }
 
@@ -88,7 +88,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
       console.error(err)
-      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+      bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
     }
   }
 })
