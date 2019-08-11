@@ -48,7 +48,7 @@ bot.on('callback_query', async (query) => {
 
   if (data === 'take_picture') {
     bot.answerCallbackQuery(id, { text: 'Taking picture!' })
-    bot.editMessageReplyMarkup({ inline_keyboard: [[]] }, { chat_id: message.chat.id }) // , { message_id: message.message_id })
+    bot.editMessageReplyMarkup({ inline_keyboard: [[]] }, { message_id: id }) // , { message_id: message.message_id })
     // keyboard = [[InlineKeyboardButton('UnAck', callback_data = '1')]]
     // reply_markup = InlineKeyboardMarkup(keyboard)
 
