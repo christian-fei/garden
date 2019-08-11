@@ -82,21 +82,11 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     }
   }
 
-  // const { forceOff, forceOn } = require('../lib/pump')
-
-  function forceOff () {
-    return Promise.resolve()
-  }
-
-  function forceOn () {
-    return Promise.resolve()
-  }
-
   if (data === 'pump_off') {
     try {
       bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      await forceOff()
+      await forceOff({ delay: 0 })
       bot.sendMessage(chat_id, `Pump has been successfuly turned off. `)
     } catch (err) {
       console.error(err)
