@@ -7,7 +7,7 @@ const Telegram = require('node-telegram-bot-api')
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 const { publicIP } = require('../lib/ip') // todo rename takeIp
 const { takePhoto, takeVideo } = require('../lib/camera')
-const { gatherReport } = reqire('../lib/report')
+const { gatherReport } = require('../lib/report')
 
 const bot = new Telegram(TELEGRAM_TOKEN, { polling: true })
 
