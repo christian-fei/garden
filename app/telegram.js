@@ -102,7 +102,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
       const message = await bot.sendMessage(chat_id, `Pump has been successfuly turned on and will be switched off in 30 seconds unless you stop pump manually.`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
       await forceOn({ timeout: 30000, framerate: 10 })
       bot.editMessageText('Pump has been successfuly turned on and has been running 30 seconds. Control video is loading...', { chat_id, message_id: message.message_id, reply_markup: { inline_keyboard: [] } })
-      bot.sendVideo(chat_id, await takeVideo({ timeout: 9000 }), {}, { contentType: 'video/mp4' })
+      bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
     } catch (err) {
       console.error(err)
       bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
