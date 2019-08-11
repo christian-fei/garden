@@ -30,7 +30,7 @@ bot.onText(/\/ip/, async ({ chat: { id: chat_id } }) => {
   }
 })
 
-bot.onText(/\/report/, async ({ chat: { chat_id } }) => {
+bot.onText(/\/report/, async ({ chat: { id: chat_id } }) => {
   try {
     bot.sendMessage(chat_id, await gatherReport())
   } catch (err) {
