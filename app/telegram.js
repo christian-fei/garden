@@ -119,13 +119,13 @@ async function pumpOn (id, chat_id, message_id, { label, timeout }) {
     bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
     const message = await bot.sendMessage(chat_id, `Pump has been successfuly turned on and will be switched off in ${label} unless you stop pump manually.`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
     ;(async (bot, chat_id) => {
-      bot.sendVideo(chat_id, await takeVideo({ timeout: 6000 }), {}, { contentType: 'video/mp4' })
+      bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
     })(bot, chat_id)
     ;(async (bot, chat_id) => {
       await new Promise(resolve => setTimeout(resolve, timeout - 1500))
-      bot.sendVideo(chat_id, await takeVideo({ timeout: 6000 }), {}, { contentType: 'video/mp4' })
+      bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
     })(bot, chat_id)
-    await new Promise(resolve => setTimeout(resolve, 6000))
+    await new Promise(resolve => setTimeout(resolve, 500))
     await forceOn({ timeout, framerate: 10 })
     bot.editMessageText(`Pump has been successfuly turned on and has been running ${label}!`, { chat_id, message_id: message.message_id, reply_markup: { inline_keyboard: [] } })
   } catch (err) {
