@@ -60,7 +60,11 @@ bot.on('callback_query', async (query) => {
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
       const camera = new StreamCamera({ codec: MJPEG })
+
       const stream = camera.createStream()
+
+      stream.pipe(process.stdout)
+
       await camera.startCapture()
       await new Promise(resolve => setTimeout(resolve, 5000))
       await camera.stopCapture()
