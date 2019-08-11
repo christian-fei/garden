@@ -87,7 +87,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      await forceOff({ delay: 0 })
+      await forceOff({ delay: 0 })
       bot.sendMessage(chat_id, `Pump has been successfuly turned off. `)
     } catch (err) {
       console.error(err)
@@ -101,19 +101,12 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
 
       bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      bot.sendMessage(chat_id, `Pump has been successfuly turned on and will be switched off in 30 seconds. Do you need to stop pump earlier than that?`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
-      const [ video, status ] = await Promise.all([
-        takeVideo({ timeout }),
-        forceOn({ timeout })
-      ])
+      const message = await bot.sendMessage(chat_id, `Pump has been successfuly turned on and will be switched off in 30 seconds.`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
+      const video = await forceOn({ timeout })
 
-      const states = [`Pump is off now. Video should follow soon...`, `Something is wrong! The Pump is still on, please stop it manually!`]
-      const keyboards = [[], [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]]]
-
-      bot.sendMessage(chat_id, states[status], { reply_markup: { inline_keyboard: keyboards[status] } })
+      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id: message.message_id })
+      bot.sendMessage(chat_id, `Pump is off now. Video should follow soon...`, { reply_markup: { inline_keyboard: [] } })
       bot.sendVideo(chat_id, video, {}, { contentType: 'video/mp4' })
-
-      bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
     } catch (err) {
       console.error(err)
       bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
