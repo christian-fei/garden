@@ -62,11 +62,10 @@ bot.on('callback_query', async (query) => {
       const camera = new StreamCamera({ codec: MJPEG })
       const buffer = camera.createStream()
 
-      bot.sendVideo(chat_id, buffer)
-
       await camera.startCapture()
       await new Promise(resolve => setTimeout(resolve, 5000))
       await camera.stopCapture()
+      bot.sendVideo(chat_id, buffer)
     } catch (err) {
       bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
     }
