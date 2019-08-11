@@ -60,12 +60,16 @@ bot.on('callback_query', async (query) => {
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
       const camera = new StreamCamera({ codec: MJPEG })
-      const buffer = camera.createStream()
+      const stream = camera.createStream()
 
-      bot.sendVideo(chat_id, buffer)
+      bot.sendVideo(chat_id, stream, {}, {
+        filename: 'snapshot',
+        contentType: 'video/x-motion-jpeg'
+      })
 
       await camera.startCapture()
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      stream.resume()
+      await new Promise(resolve => setTimeout(resolve, 5000))
       await camera.stopCapture()
     } catch (err) {
       bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
