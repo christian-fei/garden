@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const Telegram = require('node-telegram-bot-api')
 
-const { env: { TELEGRAM_TOKEN } } = process
+const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 const { gatherIP } = require('../lib/ip') // todo rename takeIp
 const { takePhoto, takeVideo } = require('../lib/camera')
 const { gatherReport } = require('../lib/report')
@@ -13,9 +13,9 @@ const bot = new Telegram(TELEGRAM_TOKEN, { polling: true })
 
 // todo: make something that accepts messages only from garden group
 
-process.on('message', ({ topic, data, chat: { id: chat_id } }) => {
+process.on('message', ({ topic, data }) => {
   if (topic === 'dht11') {
-    bot.sendMessage(chat_id, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
+    bot.sendMessage(TELEGRAM_CHAT_ID, 'Temperature ' + data.temperature + '°C\nHumidity ' + data.humidity + '%')
   }
 })
 
