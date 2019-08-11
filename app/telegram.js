@@ -103,7 +103,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
       ;(async (bot, chat_id) => {
         bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
       })(bot, chat_id)
-      ;(async (chat_id) => {
+      ;(async (bot, chat_id) => {
         await new Promise(resolve => setTimeout(resolve, 27000))
         bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
       })(bot, chat_id)
