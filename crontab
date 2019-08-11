@@ -1,1 +1,2 @@
 */30 * * * * sh /home/pi/garden/current/take-current-snapshot >> /home/pi/snapshots.log 2>&1
+*/30 * * * * aws s3 sync /home/pi/snapshots/* s3://garden-snapshots
