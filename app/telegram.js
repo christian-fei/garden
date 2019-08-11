@@ -8,6 +8,7 @@ const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 const { gatherIP } = require('../lib/ip') // todo rename takeIp
 const { takePhoto, takeVideo } = require('../lib/camera')
 const { gatherReport } = require('../lib/report')
+const { forceOff, forceOn } = require('../lib/pump')
 
 const bot = new Telegram(TELEGRAM_TOKEN, { polling: true })
 
