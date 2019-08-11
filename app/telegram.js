@@ -55,10 +55,9 @@ bot.on('callback_query', async (query) => {
     try {
       bot.answerCallbackQuery(id, { text: 'Taking photo, might take a while!' })
       bot.editMessageText('Taking photo...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      // bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
       bot.sendPhoto(chat_id, await photoFor(query))
     } catch (err) {
-      bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
+      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
     }
   }
 
