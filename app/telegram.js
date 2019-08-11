@@ -7,12 +7,14 @@ const { file } = require('tmp')
 
 const TelegramBot = require('node-telegram-bot-api')
 
+const raspivid = require('raspivid')
 const ffmpeg = require('fluent-ffmpeg')
+
 const got = require('got')
 const sparkly = require('sparkly')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 
-const { Codec: { H264, MJPEG }, StreamCamera, StillCamera } = require('pi-camera-connect')
+const { StillCamera } = require('pi-camera-connect')
 
 const { publicIP } = require('../lib/ip')
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true })
@@ -58,33 +60,23 @@ bot.on('callback_query', async (query) => {
     }
   }
   if (data === 'take_video') {
-    file(async function (err, path, _, cleanup) {
-      try {
-        if (err) throw err
-        bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
-        bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-
-        const camera = new StreamCamera({ codec: H264 })
-        const readable = camera.createStream()
-
-        ffmpeg(readable)
-          .videoCodec('mpeg4')
-          .outputOptions('-c:v', 'copy')
-          .save(path)
-
-        // const writable = createWriteStream()
-        // readable.pipe(writable)
-
-        await camera.startCapture()
-        await new Promise(resolve => setTimeout(resolve, 5000))
-        await camera.stopCapture()
-
-        bot.sendVideo(chat_id, path, {}, { contentType: 'video/H264' })
-      } catch (err) {
+    file({ postfix: '.mp4' }, async function (err, path, _, cleanup) {
+      if (err) {
         bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
-      } finally {
-        cleanup()
+        return cleanup()
       }
+
+      bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
+      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
+
+      const video = raspivid({ timeout: 5000 })
+      ffmpeg(video)
+        .outputOptions('-c:v', 'copy')
+        .on('end', () => {
+          bot.sendVideo(chat_id, path, {}, { contentType: 'video/H264' })
+            .then(() => cleanup())
+        })
+        .save(path)
     })
   }
 })
