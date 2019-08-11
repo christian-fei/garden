@@ -45,20 +45,23 @@ bot.onText(/\/camera/, ({ chat }) => {
   })
 })
 
+const { photoFor } = require('../lib/camera')
+
 bot.on('callback_query', async (query) => {
   const { id, data, message: { message_id, chat: { id: chat_id } } } = query
   console.log('/callback_query', data, query)
+
   if (data === 'take_photo') {
     try {
-      bot.answerCallbackQuery(id, { text: 'Taking picture!' })
-      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      const camera = new StillCamera()
-      const buffer = await camera.takeImage()
-      bot.sendPhoto(chat_id, buffer)
+      bot.answerCallbackQuery(id, { text: 'Taking photo, might take a while!' })
+      bot.editMessageText('Taking photo...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
+      // bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
+      bot.sendPhoto(chat_id, await photoFor(query))
     } catch (err) {
       bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
     }
   }
+
   if (data === 'take_video') {
     file({ postfix: '.mp4' }, async function (err, path, _, cleanup) {
       if (err) {
