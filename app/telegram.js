@@ -5,7 +5,7 @@ require('dotenv').config()
 const Telegram = require('node-telegram-bot-api')
 
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
-const { publicIP } = require('../lib/ip') // todo rename takeIp
+const { gatherIP } = require('../lib/ip') // todo rename takeIp
 const { takePhoto, takeVideo } = require('../lib/camera')
 const { gatherReport } = require('../lib/report')
 
@@ -20,8 +20,7 @@ process.on('message', ({ topic, data }) => {
 })
 
 bot.onText(/\/ip/, async ({ chat }) => {
-  const address = await publicIP()
-  bot.sendMessage(TELEGRAM_CHAT_ID, `DMZ Public IP is ${address} 🌍`)
+  bot.sendMessage(TELEGRAM_CHAT_ID, `DMZ Public IP is ${await gatherIP()} 🌍`)
 })
 
 bot.onText(/\/camera/, ({ chat }) => {
