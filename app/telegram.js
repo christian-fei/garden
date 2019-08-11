@@ -64,7 +64,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Shooting video, might take a while!' })
       bot.editMessageText('Shooting video...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      await bot.sendVideo(chat_id, await takeVideo({ timeout: 6000 }), {}, { contentType: 'video/mp4' })
+      await bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
       console.error(err)
