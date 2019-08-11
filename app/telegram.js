@@ -39,7 +39,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Taking photo, might take a while!' })
       bot.editMessageText('Taking photo...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      await bot.sendPhoto(chat_id, await takePhoto()) // , {}, { contentType: 'image/jpeg' })
+      await bot.sendPhoto(chat_id, await takePhoto(), {}, { contentType: 'image/jpeg' })
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
       bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
@@ -50,7 +50,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
       bot.editMessageText('Taking video...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      await bot.sendPhoto(chat_id, await takeVideo({ timeout: 5000 })) // , {}, { contentType: 'video/mp4' })
+      await bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 })), {}, { contentType: 'video/mp4' })
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
       bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
