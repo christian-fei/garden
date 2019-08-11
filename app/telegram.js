@@ -1,22 +1,20 @@
 /* eslint camelcase: 0 */
 
 require('dotenv').config()
-const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
-const { file } = require('tmp')
 
-const TelegramBot = require('node-telegram-bot-api')
-
-const raspivid = require('raspivid')
-const ffmpeg = require('fluent-ffmpeg')
-
-const got = require('got')
+const Telegram = require('node-telegram-bot-api')
 const sparkly = require('sparkly')
+
+const got = require('got') // todo: use http/https instead
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 
-const { StillCamera } = require('pi-camera-connect')
+const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
+const { publicIP } = require('../lib/ip') // todo rename takeIp
+const { takePhoto, takeVideo } = require('../lib/camera')
 
-const { publicIP } = require('../lib/ip')
-const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true })
+const bot = new Telegram(TELEGRAM_TOKEN, { polling: true })
+
+// todo: make something that accepts messages only from garden group
 
 process.on('message', ({ topic, data }) => {
   if (topic === 'dht11') {
@@ -30,55 +28,31 @@ bot.onText(/\/ip/, async function onIP ({ chat }) {
 })
 
 bot.onText(/\/camera/, ({ chat }) => {
-  console.log('/camera awaiting camera command completion...')
-  bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: 'take picture', callback_data: 'take_photo' }
-        ], [
-          { text: 'take video', callback_data: 'take_video' }
-        ]
-      ]
-    }
-  })
+  console.log('/camera [...awaiting choice]')
+  bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', { reply_markup: { inline_keyboard: [[{ text: 'take photo', callback_data: 'take_photo' }], [{ text: 'take video', callback_data: 'take_video' }]] } })
 })
 
-const { photoFor } = require('../lib/camera')
-
-bot.on('callback_query', async (query) => {
-  const { id, data, message: { message_id, chat: { id: chat_id } } } = query
-  console.log('/callback_query', data, query)
+bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: chat_id } } }) => {
+  console.log('/callback_query', data)
 
   if (data === 'take_photo') {
     try {
       bot.answerCallbackQuery(id, { text: 'Taking photo, might take a while!' })
       bot.editMessageText('Taking photo...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      bot.sendPhoto(chat_id, await photoFor(query))
+      bot.sendPhoto(chat_id, await takePhoto())
     } catch (err) {
       bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
     }
   }
 
   if (data === 'take_video') {
-    file({ postfix: '.mp4' }, async function (err, path, _, cleanup) {
-      if (err) {
-        bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
-        return cleanup()
-      }
-
+    try {
       bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
-      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-
-      const video = raspivid({ timeout: 5000 })
-      ffmpeg(video)
-        .outputOptions('-c:v', 'copy')
-        .on('end', () => {
-          bot.sendVideo(chat_id, path, {}, { contentType: 'video/H264' })
-            .then(() => cleanup())
-        })
-        .save(path)
-    })
+      bot.editMessageText('Taking video...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
+      bot.sendPhoto(chat_id, await takeVideo({ timeout: 5000 }))
+    } catch (err) {
+      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+    }
   }
 })
 
