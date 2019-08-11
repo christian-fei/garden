@@ -22,6 +22,9 @@ schedule.scheduleJob('*/5 * * * *', async function () {
 schedule.scheduleJob('0 * * * *', async function () {
   await broadcast('dht11', previous)
 })
+schedule.scheduleJob('30 * * * *', async function () {
+  await broadcast('dht11', previous)
+})
 
 process.on('beforeExit', (code) => console.log('-- beforeExit with code: ', code))
 process.on('disconnect', () => console.log('-- disconnet'))
