@@ -1,3 +1,4 @@
+/* eslint camelcase: 0 */
 process.env.NTBA_FIX_319 = 1
 
 require('dotenv').config()
@@ -8,7 +9,7 @@ const got = require('got')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const sparkly = require('sparkly')
 
-const { StillCamera } = require('pi-camera-connect')
+const { Codec, StreamCamera, StillCamera } = require('pi-camera-connect')
 
 const { publicIP } = require('../lib/ip')
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true })
@@ -28,35 +29,47 @@ bot.onText(/\/camera/, ({ chat }) => {
   console.log('/camera awaiting full command...')
   bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', {
     reply_markup: {
-      inline_keyboard: [[{
-        text: 'take picture',
-        callback_data: 'take_picture'
-      }, {
-        text: 'take video (30s)',
-        callback_data: 'take_video_30s'
-      }, {
-        text: 'take video (1m)',
-        callback_data: 'take_video_1m'
-      }]]
+      d: [
+        [
+          { text: 'take picture', callback_data: 'take_picture' }
+        ], [
+          { text: 'take video', callback_data: 'take_video' }
+        ]
+      ]
     }
   })
 })
 
 bot.on('callback_query', async (query) => {
-  const { id, data, message } = query
+  const { id, data, message: { message_id, chat: { id: chat_id } } } = query
   console.log('/callback_query', data, query)
-
   if (data === 'take_picture') {
-    bot.answerCallbackQuery(id, { text: 'Taking picture!' })
-    bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id: message.chat.id, message_id: message.message_id, reply_markup: 'take picture' })
-    // keyboard = [[InlineKeyboardButton('UnAck', callback_data = '1')]]
-    // reply_markup = InlineKeyboardMarkup(keyboard)
+    try {
+      bot.answerCallbackQuery(id, { text: 'Taking picture!' })
+      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
+      const camera = await new StillCamera()
+      const buffer = camera.takeImage()
+      bot.sendPhoto(chat_id, buffer)
+    } catch (err) {
+      bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
+    }
+  }
+  if (data === 'take_video_30s' || data === 'take_video_30s') {
+    try {
+      bot.answerCallbackQuery(id, { text: 'Taking picture!' })
+      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
-    const buffer = await new StillCamera().takeImage()
-    bot.sendPhoto(TELEGRAM_CHAT_ID, buffer)
-    // } catch (e) {
-    // bot.answerCallbackQuery(id, 'something went wrong, please try again later...')
-    // }
+      const camera = new StreamCamera({ codec: Codec.H264 })
+      const buffer = camera.createStream()
+
+      bot.sendVideo(chat_id, buffer)
+
+      await camera.startCapture()
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      await camera.stopCapture()
+    } catch (err) {
+      bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
+    }
   }
 })
 
