@@ -26,12 +26,12 @@ bot.onText(/\/ip/, async function onIP ({ chat }) {
 })
 
 bot.onText(/\/camera/, ({ chat }) => {
-  console.log('/camera awaiting full command...')
+  console.log('/camera awaiting camera command completion...')
   bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: 'take picture', callback_data: 'take_picture' }
+          { text: 'take picture', callback_data: 'take_photo' }
         ], [
           { text: 'take video', callback_data: 'take_video' }
         ]
@@ -43,12 +43,12 @@ bot.onText(/\/camera/, ({ chat }) => {
 bot.on('callback_query', async (query) => {
   const { id, data, message: { message_id, chat: { id: chat_id } } } = query
   console.log('/callback_query', data, query)
-  if (data === 'take_picture') {
+  if (data === 'take_photo') {
     try {
       bot.answerCallbackQuery(id, { text: 'Taking picture!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      const camera = await new StillCamera()
-      const buffer = camera.takeImage()
+      const camera = new StillCamera()
+      const buffer = await camera.takeImage()
       bot.sendPhoto(chat_id, buffer)
     } catch (err) {
       bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
