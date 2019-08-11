@@ -3,13 +3,12 @@ process.env.NTBA_FIX_319 = 1
 
 require('dotenv').config()
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
-
-const { createWriteStream } = require('fs')
 const { file } = require('tmp')
 
 const TelegramBot = require('node-telegram-bot-api')
+
+const ffmpeg = require('fluent-ffmpeg')
 const got = require('got')
-const path = require('path')
 const sparkly = require('sparkly')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 
@@ -59,7 +58,7 @@ bot.on('callback_query', async (query) => {
     }
   }
   if (data === 'take_video') {
-    file(async function (err, path, fd, cleanup) {
+    file(async function (err, path, _, cleanup) {
       try {
         if (err) throw err
         bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
@@ -67,9 +66,14 @@ bot.on('callback_query', async (query) => {
 
         const camera = new StreamCamera({ codec: H264 })
         const readable = camera.createStream()
-        const writable = createWriteStream(path)
 
-        readable.pipe(writable)
+        ffmpeg(readable)
+          .videoCodec('mpeg4')
+          .outputOptions('-c:v', 'copy')
+          .save(path)
+
+        // const writable = createWriteStream()
+        // readable.pipe(writable)
 
         await camera.startCapture()
         await new Promise(resolve => setTimeout(resolve, 5000))
