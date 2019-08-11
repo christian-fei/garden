@@ -29,7 +29,7 @@ bot.onText(/\/camera/, ({ chat }) => {
   console.log('/camera awaiting full command...')
   bot.sendMessage(TELEGRAM_CHAT_ID, 'How may i help you?', {
     reply_markup: {
-      d: [
+      inline_keyboard: [
         [
           { text: 'take picture', callback_data: 'take_picture' }
         ], [
@@ -56,7 +56,7 @@ bot.on('callback_query', async (query) => {
   }
   if (data === 'take_video_30s' || data === 'take_video_30s') {
     try {
-      bot.answerCallbackQuery(id, { text: 'Taking picture!' })
+      bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
       const camera = new StreamCamera({ codec: Codec.H264 })
