@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const Telegram = require('node-telegram-bot-api')
 
-const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
+const { env: { TELEGRAM_TOKEN } } = process
 const { gatherIP } = require('../lib/ip') // todo rename takeIp
 const { takePhoto, takeVideo } = require('../lib/camera')
 const { gatherReport } = require('../lib/report')
@@ -25,43 +25,18 @@ bot.onText(/\/ip/, async ({ chat: { id: chat_id } }) => {
     console.log('/ip', address)
     bot.sendMessage(chat_id, `Public DMZ IP is ${address} 🌍`)
   } catch (err) {
+    console.error(err)
     bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
   }
 })
 
-bot.onText(/\/camera/, ({ chat: { id: chat_id } }) => {
-  console.log('/camera [...awaiting choice]')
-  bot.sendMessage(chat_id, 'How may i help you?', { reply_markup: { inline_keyboard: [[{ text: 'take photo', callback_data: 'take_photo' }], [{ text: 'take video', callback_data: 'take_video' }]] } })
-})
-
-bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: chat_id } } }) => {
-  console.log('/callback_query', data)
-
-  if (data === 'take_photo') {
-    try {
-      bot.answerCallbackQuery(id, { text: 'Taking photo, might take a while!' })
-      bot.editMessageText('Taking photo...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      await bot.sendPhoto(chat_id, await takePhoto(), {}, { contentType: 'image/jpeg' })
-      bot.deleteMessage(chat_id, message_id)
-    } catch (err) {
-      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
-    }
-  }
-
-  if (data === 'take_video') {
-    try {
-      bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
-      bot.editMessageText('Taking video...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      await bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
-      bot.deleteMessage(chat_id, message_id)
-    } catch (err) {
-      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
-    }
-  }
-})
-
 bot.onText(/\/report/, async ({ chat: { chat_id } }) => {
-  bot.sendMessage(chat_id, await gatherReport())
+  try {
+    bot.sendMessage(chat_id, await gatherReport())
+  } catch (err) {
+    console.error(err)
+    bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+  }
   /*
     Daily Followup
     ---
@@ -83,6 +58,39 @@ bot.onText(/\/report/, async ({ chat: { chat_id } }) => {
     lasted {5 minutes}. According to watering schedule next watering
     is (tomorrow|2019-05-12 at 9:00|18:00).
   */
+})
+
+bot.onText(/\/camera/, ({ chat: { id: chat_id } }) => {
+  console.log('/camera [...awaiting choice]')
+  bot.sendMessage(chat_id, 'How may i help you?', { reply_markup: { inline_keyboard: [[{ text: 'take photo', callback_data: 'take_photo' }], [{ text: 'take video', callback_data: 'take_video' }]] } })
+})
+
+bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: chat_id } } }) => {
+  console.log('/callback_query', data)
+
+  if (data === 'take_photo') {
+    try {
+      bot.answerCallbackQuery(id, { text: 'Taking photo, might take a while!' })
+      bot.editMessageText('Taking photo...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
+      await bot.sendPhoto(chat_id, await takePhoto(), {}, { contentType: 'image/jpeg' })
+      bot.deleteMessage(chat_id, message_id)
+    } catch (err) {
+      console.error(err)
+      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+    }
+  }
+
+  if (data === 'take_video') {
+    try {
+      bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
+      bot.editMessageText('Taking video...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
+      await bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
+      bot.deleteMessage(chat_id, message_id)
+    } catch (err) {
+      console.error(err)
+      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
+    }
+  }
 })
 
 // bot.on('message', (...args) => console.log('message', ...args))
