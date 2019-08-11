@@ -54,7 +54,7 @@ bot.on('callback_query', async (query) => {
       bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
     }
   }
-  if (data === 'take_video_30s' || data === 'take_video_30s') {
+  if (data === 'take_video') {
     try {
       bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
