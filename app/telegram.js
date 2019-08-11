@@ -37,27 +37,6 @@ bot.onText(/\/report/, async ({ chat: { id: chat_id } }) => {
     console.error(err)
     bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
   }
-  /*
-    Daily Followup
-    ---
-    Currently {description}, temperature is {temperature}°C with relative
-    humidity of about {humidity}%.
-
-    Last watering started (today|yesterday|2019-05-10) at (9:00|18:00) and
-    lasted {5 minutes}. Reservoir is filled up {50%} and water temperature
-    is {22°C}. if [water < 50%] -> This could be a good time to top up the
-    tank with fresh water. It looks like there's enough water for at least
-    {2 days} according to schedule.
-
-    Today was {quite hot} you might consider water again manually.
-    Today was {quite wet|cold} you might consider skip water tomorrow.
-
-    Garden Watering Report
-    ---
-    Last watering started (today|yesterday|2019-05-10) at (9:00|18:00) and
-    lasted {5 minutes}. According to watering schedule next watering
-    is (tomorrow|2019-05-12 at 9:00|18:00).
-  */
 })
 
 bot.onText(/\/garden/, ({ chat: { id: chat_id } }) => {
