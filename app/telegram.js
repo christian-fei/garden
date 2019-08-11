@@ -3,14 +3,11 @@
 require('dotenv').config()
 
 const Telegram = require('node-telegram-bot-api')
-const sparkly = require('sparkly')
-
-const got = require('got') // todo: use http/https instead
-const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 const { publicIP } = require('../lib/ip') // todo rename takeIp
 const { takePhoto, takeVideo } = require('../lib/camera')
+const { gatherReport } = reqire('../lib/report')
 
 const bot = new Telegram(TELEGRAM_TOKEN, { polling: true })
 
@@ -22,7 +19,7 @@ process.on('message', ({ topic, data }) => {
   }
 })
 
-bot.onText(/\/ip/, async function onIP ({ chat }) {
+bot.onText(/\/ip/, async ({ chat }) => {
   const address = await publicIP()
   bot.sendMessage(TELEGRAM_CHAT_ID, `DMZ Public IP is ${address} 🌍`)
 })
@@ -58,48 +55,29 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
   }
 })
 
-bot.onText(/\/report/, async function onIP ({ chat }) {
-  const history = temperatureMoistureHistory.read()
-  if (history.length > 3) {
-    // fixme: await ../lib/get('https://api.openweathermap.org/data/2.5/weather', { lat: 46.1008181, lon: 11.1105323, appid: process.env.OPEN_WEATHER_MAP_API_KEY })
-    const { body: weatherData } = await got(`https://api.openweathermap.org/data/2.5/weather?lat=46.1008181&lon=11.1105323&appid=${process.env.OPEN_WEATHER_MAP_API_KEY}`, { json: true })
-    const last = history[history.length - 1]
-    const last2h = history.splice(history.length - 24, history.length)
-    const temperatureChart = sparkly(last2h.map((d, i) => d.temperature))
-    const humidityChart = sparkly(last2h.map((d, i) => d.humidity))
-    const text = `🌡 Temperature ${last && `${last.temperature}º`} (last 2h)
-${temperatureChart}
-💦 Moisture ${last && `${last.humidity}%`} (last 2h)
-${humidityChart}
-🌦 Weather (last updated ${new Date(weatherData.dt * 1000 + 1000 * 60 * 60 * 2).toISOString()})
-Condition: ${weatherData.weather[0] && weatherData.weather[0].description}
-Sunrise ${new Date(weatherData.sys.sunrise * 1000 + 1000 * 60 * 60 * 2).toISOString()}
-Sunset ${new Date(weatherData.sys.sunset * 1000 + 1000 * 60 * 60 * 2).toISOString()}
-Temp station: ${(weatherData.main.temp - 273.15).toFixed(1)} (min ${(weatherData.main.temp_min - 273.15).toFixed(1)} - ${(weatherData.main.temp_max - 273.15).toFixed(1)})`
-    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text)
-  }
-/*
+bot.onText(/\/report/, async ({ chat }) => {
+  bot.sendMessage(process.env.TELEGRAM_CHAT_ID, await gatherReport(chat))
+  /*
+    Daily Followup
+    ---
+    Currently {description}, temperature is {temperature}°C with relative
+    humidity of about {humidity}%.
 
-  Daily Followup
-  ---
-  Currently {description}, temperature is {temperature}°C with relative
-  humidity of about {humidity}%.
+    Last watering started (today|yesterday|2019-05-10) at (9:00|18:00) and
+    lasted {5 minutes}. Reservoir is filled up {50%} and water temperature
+    is {22°C}. if [water < 50%] -> This could be a good time to top up the
+    tank with fresh water. It looks like there's enough water for at least
+    {2 days} according to schedule.
 
-  Last watering started (today|yesterday|2019-05-10) at (9:00|18:00) and
-  lasted {5 minutes}. Reservoir is filled up {50%} and water temperature
-  is {22°C}. if [water < 50%] -> This could be a good time to top up the
-  tank with fresh water. It looks like there's enough water for at least
-  {2 days} according to schedule.
+    Today was {quite hot} you might consider water again manually.
+    Today was {quite wet|cold} you might consider skip water tomorrow.
 
-  Today was {quite hot} you might consider water again manually.
-  Today was {quite wet|cold} you might consider skip water tomorrow.
-
-  Garden Watering Report
-  ---
-  Last watering started (today|yesterday|2019-05-10) at (9:00|18:00) and
-  lasted {5 minutes}. According to watering schedule next watering
-  is (tomorrow|2019-05-12 at 9:00|18:00).
-*/
+    Garden Watering Report
+    ---
+    Last watering started (today|yesterday|2019-05-10) at (9:00|18:00) and
+    lasted {5 minutes}. According to watering schedule next watering
+    is (tomorrow|2019-05-12 at 9:00|18:00).
+  */
 })
 
 // bot.on('message', (...args) => console.log('message', ...args))
