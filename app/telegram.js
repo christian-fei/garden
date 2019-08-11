@@ -9,7 +9,7 @@ const got = require('got')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const sparkly = require('sparkly')
 
-const { Codec, StreamCamera, StillCamera } = require('pi-camera-connect')
+const { Codec: { H264, MJPEG }, StreamCamera, StillCamera } = require('pi-camera-connect')
 
 const { publicIP } = require('../lib/ip')
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true })
@@ -59,7 +59,7 @@ bot.on('callback_query', async (query) => {
       bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
-      const camera = new StreamCamera({ codec: Codec.H264 })
+      const camera = new StreamCamera({ codec: MJPEG })
       const buffer = camera.createStream()
 
       bot.sendVideo(chat_id, buffer)
