@@ -76,7 +76,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      bot.sendMessage(chat_id, `Last watering was ${'yesterday'} at ${'06:30'}. Next scheduled watering time is ${'tomorrow'} at ${'6:30'}. Would you like to adjust water manually?`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Start Pump 30s', callback_data: 'pump_on_30s' }], [{ text: 'Start Pump 1m', callback_data: 'pump_on_1m' }], [{ text: 'Start Pump 2m', callback_data: 'pump_on_2m' }], [{ text: 'Start Pump 5m', callback_data: 'pump_on_5m' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
+      bot.sendMessage(chat_id, `Last watering was ${'yesterday'} at ${'06:30'}. Next scheduled watering time is ${'tomorrow'} at ${'6:30'}. Would you like to adjust water manually?`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Start Pump 30s', callback_data: 'pump_on_30s' }], [{ text: 'Start Pump 1m', callback_data: 'pump_on_1m' }], [{ text: 'Start Pump 2m', callback_data: 'pump_on_2m' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
     } catch (err) {
       console.error(err)
       bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
@@ -107,6 +107,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
         await new Promise(resolve => setTimeout(resolve, 27000))
         bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
       })(bot, chat_id)
+      await new Promise(resolve => setTimeout(resolve, 1000))
       await forceOn({ timeout: 30000, framerate: 10 })
       bot.editMessageText('Pump has been successfuly turned on and has been running 30 seconds!', { chat_id, message_id: message.message_id, reply_markup: { inline_keyboard: [] } })
     } catch (err) {
@@ -119,7 +120,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      await forceOn({ timeout: 60000 })
+      // await forceOn({ timeout: 60000 })
       bot.sendMessage(chat_id, `Pump has been successfuly turned on and will be switched off in 1 minute. Do you need to stop pump earlier than that?`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
     } catch (err) {
       console.error(err)
@@ -131,7 +132,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      await forceOn({ timeout: await forceOn({ timeout: 120000 }) })
+      // await forceOn({ timeout: 120000 })
       bot.sendMessage(chat_id, `Pump has been successfuly turned on and will be switched off in 2 minutes. Do you need to stop pump earlier than that?`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
     } catch (err) {
       console.error(err)
