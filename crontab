@@ -1,4 +1,4 @@
 SHELL=/bin/bash
 */30 * * * * sh /home/pi/garden/current/take-current-snapshot >> /home/pi/snapshots.log 2>&1
-5 * * * * /bin/bash aws s3 sync /home/pi/snapshots/* s3://garden-snapshots >> /home/pi/s3-backup.log 2>&1
+5 * * * * /bin/bash aws s3 sync /home/pi/snapshots/ s3://garden-snapshots >> /home/pi/s3-backup.log 2>&1
 10 */6 * * * rm /home/pi/snapshots/* >> /home/pi/clean-snapshots.log 2>&1
