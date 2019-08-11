@@ -63,7 +63,7 @@ bot.on('callback_query', async (query) => {
       bot.answerCallbackQuery(id, { text: 'Taking video, might take a while!' })
       bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
 
-      const camera = new StreamCamera({ codec: H264 })
+      const camera = new StreamCamera({ codec: MJPEG })
       const stream = camera.createStream()
       const filename = path.join('/tmp', uuid())
 
@@ -72,7 +72,7 @@ bot.on('callback_query', async (query) => {
       await camera.startCapture()
       await new Promise(resolve => setTimeout(resolve, 5000))
       await camera.stopCapture()
-      bot.sendVideo(chat_id, filename, {}, { contentType: 'video/H264' })
+      bot.sendVideo(chat_id, filename, {}, { contentType: 'video/x-motion-jpeg' })
     } catch (err) {
       bot.sendMessage(TELEGRAM_CHAT_ID, 'Something went wrong, please try again later...')
     }
