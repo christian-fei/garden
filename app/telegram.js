@@ -42,7 +42,7 @@ bot.onText(/\/report/, async ({ chat: { id: chat_id } }) => {
 
 bot.onText(/\/garden/, ({ chat: { id: chat_id } }) => {
   console.log('/garden [...awaiting choice]')
-  bot.sendMessage(chat_id, `Its currently ${'20'}°C at ${'65'}% humidity outside.\nHow may i help you?`, { reply_markup: { inline_keyboard: [[{ text: 'Photo', callback_data: 'photo' }], [{ text: 'Video', callback_data: 'video' }], [{ text: 'Pump', callback_data: 'pump' }]] } })
+  bot.sendMessage(chat_id, `Its currently ${'20'}°C at ${'65'}% humidity outside.\nHow may i help you?`, { reply_markup: { inline_keyboard: [[{ text: 'Photo', callback_data: 'photo' }], [{ text: 'Video', callback_data: 'video' }], [{ text: 'Pump', callback_data: 'pump' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
 })
 
 bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: chat_id } } }) => {
