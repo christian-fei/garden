@@ -5,7 +5,7 @@ const schedule = require('node-schedule')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
 const {read} = require('../lib/dht11')
 const history = temperatureMoistureHistory.read()
-const previous = { temperature: undefined, humidity: undefined }
+const previous = history[history.length - 1] || {}
 
 schedule.scheduleJob('*/5 * * * *', async function () {
   const sample = await read()
