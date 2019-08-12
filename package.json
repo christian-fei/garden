@@ -22,6 +22,8 @@
     "dotenv": "^8.0.0",
     "ds18b20-raspi": "^0.3.3",
     "execa": "^2.0.3",
+    "express": "^4.17.1",
+    "express-basic-auth": "^1.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "got": "^9.6.0",
     "gpio": "^0.2.10",
