@@ -9,6 +9,7 @@ const basicAuth = require('express-basic-auth')
 const { takePhoto } = require('../lib/camera')
 
 const app = express()
+app.listen(3000)
 app.use(basicAuth({
   users: {
     [BASIC_AUTH_USERNAME]: BASIC_AUTH_PASSWORD
