@@ -14,7 +14,9 @@ app.listen(3000)
 app.use(basicAuth({
   users: {
     [BASIC_AUTH_USERNAME]: BASIC_AUTH_PASSWORD
-  }
+  },
+  challenge: true,
+  realm: 'Imb4T3st4pp'
 }))
 
 app.get('/photo', async (req, res) => {
