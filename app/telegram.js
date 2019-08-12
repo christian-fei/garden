@@ -34,6 +34,9 @@ bot.onText(/\/ip/, async ({ chat: { id: chat_id } }) => {
 bot.onText(/\/report/, async ({ chat: { id: chat_id } }) => {
   try {
     bot.sendMessage(chat_id, await gatherReport())
+    bot.sendMessage(chat_id, `<iframe width="650" height="450" src="https://embed.windy.com/embed2.html?lat=46.069&lon=11.115&zoom=5&level=surface&overlay=wind&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=46.069&detailLon=11.115&metricWind=default&metricTemp=default&radarRange=-1" frameborder="0"></iframe>`, {
+      parse_mode: 'HTML'
+    })
   } catch (err) {
     console.error(err)
     bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
