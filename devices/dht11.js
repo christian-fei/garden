@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 
-const { promises: { read } } = require('node-dht-sensor')
 const { broadcast } = require('../lib/ipc')
 const schedule = require('node-schedule')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
-const model = 11
-const gpio = 4
+const {read} = require('../lib/dht11')
 const history = temperatureMoistureHistory.read()
 const previous = { temperature: undefined, humidity: undefined }
 
 schedule.scheduleJob('*/5 * * * *', async function () {
-  const { temperature, humidity, date = new Date().toISOString() } = await read(model, gpio)
-  Object.assign(previous, { temperature, humidity, date })
-  history.push({ temperature, humidity, date })
+  const sample = await read()
+  Object.assign(previous, sample)
+  history.push(sample)
   if (history.length > 10000) {
     history.splice(history.length - 10000, history.length)
   }
