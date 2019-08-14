@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 require('dotenv').config()
 
 const { BASIC_AUTH_USERNAME, BASIC_AUTH_PASSWORD } = process.env
