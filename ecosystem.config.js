@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
-    name: 'dht11',
-    script: 'devices/dht11.js',
+    name: 'temperature-humidity',
+    script: 'app/temperature-humidity.js',
     exec_mode: 'fork',
     instances: 1,
     restart_delay: 3000,
