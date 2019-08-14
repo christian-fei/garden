@@ -13,19 +13,6 @@ module.exports = {
       NODE_ENV: 'production'
     }
   }, {
-    name: 'logger',
-    script: 'app/logger.js',
-    exec_mode: 'fork',
-    instances: 1,
-    restart_delay: 3000,
-    watch: false,
-    env: {
-      NODE_ENV: 'development'
-    },
-    env_production: {
-      NODE_ENV: 'production'
-    }
-  }, {
     name: 'telegram',
     script: 'app/telegram.js',
     exec_mode: 'fork',
