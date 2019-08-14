@@ -17,10 +17,18 @@ schedule.scheduleJob('*/5 * * * *', async function () {
   temperatureMoistureHistory.write(history)
 })
 
+function isNight () {
+  const now = new Date()
+  const hours = now.getHours()
+  return hours < 7 && hours > 22
+}
+
 schedule.scheduleJob('0 * * * *', async function () {
+  if (isNight) return
   await broadcast('dht11', previous)
 })
 schedule.scheduleJob('30 * * * *', async function () {
+  if (isNight) return
   await broadcast('dht11', previous)
 })
 
