@@ -3,13 +3,13 @@
 const { broadcast } = require('../lib/ipc')
 const schedule = require('node-schedule')
 const temperatureMoistureHistory = require('../lib/temperature-moisture-history')
-const {read} = require('../lib/dht11')
+const { read } = require('../lib/dht11')
 const history = temperatureMoistureHistory.read()
-const previous = history[history.length - 1] || {}
+let previous = history[history.length - 1] || {}
 
 schedule.scheduleJob('*/5 * * * *', async function () {
   const sample = await read()
-  Object.assign(previous, sample)
+  previous = sample
   history.push(sample)
   if (history.length > 10000) {
     history.splice(history.length - 10000, history.length)
