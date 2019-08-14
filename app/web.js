@@ -24,6 +24,9 @@ app.use(basicAuth({
 app.get('/ip', async (req, res) => {
   res.end(await gatherIP())
 })
+app.get('/', async (req, res) => {
+  res.end(await gatherReport())
+})
 app.get('/report', async (req, res) => {
   res.end(await gatherReport())
 })
