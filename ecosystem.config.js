@@ -42,7 +42,7 @@ module.exports = {
   deploy: {
     production: {
       user: 'pi',
-      host: process.env.PI_IP || '192.168.1.110',
+      host: process.env.PI_IP || 'hiddenpi',
       ref: 'origin/master',
       repo: 'git@github.com:christian-fei/garden.git',
       path: '/home/pi/garden',
