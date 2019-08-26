@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo "rm -f today-timelapse.mp4"
+rm -f today-timelapse.mp4
+
+DATE=$(date +"%Y-%m-%d")
+
+
+echo "using snapshots/$DATE*"
+ls -1 snapshots/$DATE*
+cat snapshots/$DATE*.jpg | ffmpeg -f image2pipe -r 30 -vcodec mjpeg -i - -vcodec libx264 today-timelapse.mp4
+
+# (not working?)
+# FILES_LIST=$(ls -1t snapshots/*.jpg | grep -v current | head -10)
+# grep "$FILES_LIST" | xargs cat | ffmpeg -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 today-timelapse.mp4

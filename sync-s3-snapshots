@@ -1,4 +1,4 @@
 #!/bin/bash
 
-aws s3 sync s3://garden-snapshots ~/garden-snapshots
+aws s3 sync s3://garden-snapshots snapshots
 
