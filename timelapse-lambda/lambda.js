@@ -14,7 +14,7 @@ exports.handler = function (event, context, cb) {
   const outFilePath = `/tmp/out.mp4`
   let files = []
 
-  const { Bucket = 'garden-snapshots', Amount = 48, Fps = 5 } = event
+  const { Bucket = 'garden-snapshots', Amount = 96, Fps = 5 } = event
 
   downloadS3Images({ Bucket })
     .then(createTimelapse)
