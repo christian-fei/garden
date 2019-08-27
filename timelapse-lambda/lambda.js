@@ -9,8 +9,6 @@ const getObject = promisify(S3.getObject).bind(S3)
 const putObject = promisify(S3.putObject).bind(S3)
 
 const ffmpeg = require('fluent-ffmpeg')
-// const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path
-// ffmpeg.setFfmpegPath(ffmpegPath)
 
 exports.handler = function (event, context, cb) {
   const outFilePath = `/tmp/out.mp4`
