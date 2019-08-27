@@ -6,7 +6,7 @@ const Telegram = require('node-telegram-bot-api')
 
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 const { gatherIP } = require('../lib/ip') // todo rename takeIp
-const { takePhoto, takeVideo } = require('../lib/camera')
+const { takePhoto, takeVideo, takeTimelapse } = require('../lib/camera')
 const { gatherReport } = require('../lib/report')
 const { forceOff, forceOn } = require('../lib/pump')
 
@@ -42,7 +42,7 @@ bot.onText(/\/report/, async ({ chat: { id: chat_id } }) => {
 
 bot.onText(/\/garden/, ({ chat: { id: chat_id } }) => {
   console.log('/garden [...awaiting choice]')
-  bot.sendMessage(chat_id, `Its currently ${'20'}°C at ${'65'}% humidity outside.\nHow may i help you?`, { reply_markup: { inline_keyboard: [[{ text: 'Photo', callback_data: 'photo' }], [{ text: 'Video', callback_data: 'video' }], [{ text: 'Pump', callback_data: 'pump' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
+  bot.sendMessage(chat_id, `Its currently ${'20'}°C at ${'65'}% humidity outside.\nHow may i help you?`, { reply_markup: { inline_keyboard: [[{ text: 'Photo', callback_data: 'photo' }], [{ text: 'Video', callback_data: 'video' }], [{ text: 'Timelapse', callback_data: 'timelapse' }], [{ text: 'Pump', callback_data: 'pump' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
 })
 
 bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: chat_id } } }) => {
@@ -65,6 +65,18 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
       bot.answerCallbackQuery(id, { text: 'Shooting video, might take a while!' })
       bot.editMessageText('Shooting video...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
       await bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
+      bot.deleteMessage(chat_id, message_id)
+    } catch (err) {
+      console.error(err)
+      bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
+    }
+  }
+
+  if (data === 'timelapse') {
+    try {
+      bot.answerCallbackQuery(id, { text: 'Making timelapse, might take a while!' })
+      bot.editMessageText('Making timelapse...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
+      await bot.sendVideo(chat_id, await takeTimelapse(), {}, { contentType: 'video/mp4' })
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
       console.error(err)
