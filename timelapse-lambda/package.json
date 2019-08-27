@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.518.0",
     "fluent-ffmpeg": "^2.1.2"
   }
 }
