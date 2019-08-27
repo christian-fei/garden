@@ -13,56 +13,58 @@ const ffmpeg = require('fluent-ffmpeg')
 // ffmpeg.setFfmpegPath(ffmpegPath)
 
 exports.handler = function (event, context, cb) {
-  const instance = ffmpeg()
   const outFilePath = `/tmp/out.mp4`
+  let files = []
 
-  listObjects({
-    Bucket: event.Bucket
-  })
-    .then(data => {
-      const amount = Number.isFinite(event.Amount) ? event.Amount : 10
-      const files = data.Contents.filter((d, i) => i > (data.Contents.length - 1 - amount)).map(d => d.Key)
+  const { Bucket, Amount = 96, Fps = 10 } = event
 
-      return Promise.all(files.map(file => {
-        var params = {
-          Bucket: event.Bucket,
-          Key: file
-        }
-        return getObject(params)
-      }))
-    })
-    .then(results => {
-      results.forEach((r, i) => {
-        const tmpFilePath = `/tmp/${i}.jpg`
-        fs.writeFileSync(tmpFilePath, r.Body)
-        instance.addInput(tmpFilePath)
-      })
+  downloadS3Images({ Bucket })
+    .then(createTimelapse)
+    .then(saveTimelapseToS3)
+    .then((data) => cb(null, { success: true, files, data }))
+    .catch(err => cb(err, { files }))
 
-      return new Promise((resolve, reject) => {
-        instance
-          .noAudio()
-          .outputOptions('-r 10')
-          .videoCodec('libx264')
-          .on('end', function () {
-            console.log('Processing finished !')
-            resolve()
-          })
-          .save(outFilePath, { end: true })
+  function downloadS3Images ({ Bucket } = {}) {
+    if (!Bucket) throw new Error('Bucket missing')
+    return listObjects({ Bucket })
+      .then(data => {
+        files = data.Contents
+          .filter(d => d.Key.startsWith('201'))
+          .filter((d, i) => i > (data.Contents.length - 1 - Amount)).map(d => d.Key)
+
+        const tasks = files.map(Key => getObject({ Bucket, Key }))
+
+        return Promise.all(tasks)
       })
-    })
-    .then(() => {
-      var params = {
-        // ACL: 'authenticated-read',
-        Body: fs.readFileSync(outFilePath),
-        Bucket: event.Bucket,
-        Key: 'timelapse.mp4'
-      }
-      S3.putObject(params, function (err, data) {
-        cb(err, data)
-        // cb(null, { success: true, file: outFilePath })
+      .then(results => {
+        results.forEach((r, i) => fs.writeFileSync(`/tmp/${i}.jpg`, r.Body))
       })
+  }
+
+  function createTimelapse () {
+    return new Promise((resolve, reject) => {
+      ffmpeg()
+        .addInput('/tmp/%01d.jpg')
+        .noAudio()
+        .outputOptions(`-r ${Fps}`)
+        .videoCodec('libx264')
+        .on('error', (err) => {
+          reject(err)
+        })
+        .on('end', () => {
+          console.log('Processing finished !')
+          resolve()
+        })
+        .save(outFilePath, { end: true })
     })
-    .catch(err => {
-      cb(err)
+  }
+
+  function saveTimelapseToS3 () {
+    return putObject({
+      // ACL: 'authenticated-read',
+      Body: fs.readFileSync(outFilePath),
+      Bucket: Bucket,
+      Key: 'timelapse.mp4'
     })
+  }
 }
