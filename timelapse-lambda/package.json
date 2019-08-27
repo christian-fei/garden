@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "delete-lambda": "./delete-aws-lamdba",
+    "create-lambda": "./create-aws-lamdba",
+    "deploy-lambda": "./make-aws-lambda-zip && ./update-aws-lambda",
+    "launch-lambda": "./launch-aws-lambda"
   },
   "keywords": [],
   "author": "",
