@@ -1,0 +1,10 @@
+#!/bin/bash
+
+source secrets
+
+aws lambda invoke \
+  --region $REGION \
+  --function-name GardenTimelapse \
+  --payload "{\"Bucket\":\"$BUCKET\", \"Amount\": 2}" out --log-type Tail --query 'LogResult' --output text | base64 --decode
+
+cat out

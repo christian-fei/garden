@@ -1,0 +1,6 @@
+#!/bin/bash
+
+zip \
+  --symlinks \
+  --recurse-paths lambda.zip \
+  lambda.js package.json node_modules/

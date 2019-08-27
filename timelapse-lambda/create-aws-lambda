@@ -1,0 +1,18 @@
+#!/bin/bash
+
+source secrets
+
+aws lambda create-function \
+  --region $REGION \
+  --function-name GardenTimelapse \
+  --runtime nodejs10.x \
+  --timeout 60 \
+  --memory 2048 \
+  --role $ARN \
+  --handler lambda.handler \
+  --zip-file "fileb://lambda.zip"
+
+aws lambda update-function-configuration \
+  --region $REGION \
+  --function-name GardenTimelapse \
+  --layers $FFMPEG_LAYER_ARN

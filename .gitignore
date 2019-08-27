@@ -4,3 +4,8 @@ package-lock.json
 todo.md
 snapshots/
 *.mp4
+timelapse-lambda/secrets
+timelapse-lambda/lambda.zip
+timelapse-lambda/lambda-output
+timelapse-lambda/x
+out

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source secrets
+
+aws lambda delete-function \
+  --region $REGION \
+  --function-name GardenTimelapse
