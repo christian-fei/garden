@@ -40,6 +40,9 @@ exports.handler = function (event, context, cb) {
 
       return new Promise((resolve, reject) => {
         instance
+          .noAudio()
+          .outputOptions('-r 10')
+          .videoCodec('libx264')
           .on('end', function () {
             console.log('Processing finished !')
             resolve()
