@@ -2,7 +2,7 @@
 
 const AWS = require('aws-sdk')
 
-const region = 'eu-central-1'
+const region = 'us-east-1'
 
 const apiVersion = 'latest'
 const lambda = new AWS.Lambda({ apiVersion, region })
