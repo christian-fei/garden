@@ -2,7 +2,7 @@
 
 const { promisify } = require('util')
 const fs = require('fs')
-const writeFilePromise = require('util').promisify(fs.writeFile).bind(fs)
+const writeFilePromise = promisify(fs.writeFile).bind(fs)
 const AWS = require('aws-sdk')
 const S3 = new AWS.S3()
 const listObjects = promisify(S3.listObjects).bind(S3)
@@ -54,9 +54,8 @@ exports.handler = function ({ Bucket = 'garden-snapshots', Amount = 24, Fps = 6 
 
   function saveTimelapseToS3 () {
     return putObject({
-      // ACL: 'authenticated-read',
       Body: fs.readFileSync(timelapsePath),
-      Bucket: Bucket,
+      Bucket,
       Key: 'timelapse.mp4'
     })
   }
