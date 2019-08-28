@@ -3,19 +3,18 @@
 const { promisify } = require('util')
 const fs = require('fs')
 const writeFilePromise = promisify(fs.writeFile).bind(fs)
+const ffmpeg = require('fluent-ffmpeg')
 const AWS = require('aws-sdk')
 const S3 = new AWS.S3()
 const listObjects = promisify(S3.listObjects).bind(S3)
 const getObject = promisify(S3.getObject).bind(S3)
 const putObject = promisify(S3.putObject).bind(S3)
 
-const ffmpeg = require('fluent-ffmpeg')
-
-exports.handler = function ({ bucket = 'garden-snapshots', amount = 24, fps = 6, name = 'timelapse.mp4' }, context, cb) {
+exports.handler = function ({ bucket = 'snapshots', name = 'timelapse.mp4', amount = 24, fps = 6 }, context, cb) {
   downloadS3Images({ bucket })
-    .then(() => createTimelapse({ name }))
+    .then(() => createTimelapse({ name, fps }))
     .then(() => saveTimelapseToS3({ bucket, name }))
-    .then((data) => cb(null, { success: true, data }))
+    .then((data) => cb(null, { success: true, data, bucket, name, amount, fps }))
     .catch(err => cb(err))
 
   function timelapsePathFor (name) { return `/tmp/${name}` }
@@ -33,7 +32,7 @@ exports.handler = function ({ bucket = 'garden-snapshots', amount = 24, fps = 6,
       .then(files => Promise.all(files.map((file, i) => writeFilePromise(`/tmp/${i}.jpg`, file.Body))))
   }
 
-  function createTimelapse ({ name = `timelapse.mp4`, fps = 6 } = {}) {
+  function createTimelapse ({ name, fps } = {}) {
     const timelapsePath = timelapsePathFor(name)
     return new Promise((resolve, reject) => {
       ffmpeg().addInput('/tmp/%01d.jpg').noAudio().outputOptions(`-r ${fps}`).videoCodec('libx264')
