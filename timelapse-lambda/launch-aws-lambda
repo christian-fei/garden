@@ -2,6 +2,6 @@
 
 source secrets
 
-aws lambda invoke --region $REGION --function-name GardenTimelapse --payload "{\"Bucket\":\"$BUCKET\", \"Amount\": 96, \"Fps\": 20}" out --log-type Tail --query 'LogResult' --output text | base64 --decode
+aws lambda invoke --region $REGION --function-name GardenTimelapse --payload "{\"Bucket\":\"$BUCKET\", \"Amount\": 24, \"Fps\": 12}" out --log-type Tail --query 'LogResult' --output text | base64 --decode
 
 cat out

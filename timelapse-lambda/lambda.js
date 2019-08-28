@@ -2,6 +2,7 @@
 
 const { promisify } = require('util')
 const fs = require('fs')
+const writeFilePromise = require('util').promisify(fs.writeFile).bind(fs)
 const AWS = require('aws-sdk')
 const S3 = new AWS.S3()
 const listObjects = promisify(S3.listObjects).bind(S3)
@@ -10,7 +11,7 @@ const putObject = promisify(S3.putObject).bind(S3)
 
 const ffmpeg = require('fluent-ffmpeg')
 
-exports.handler = function ({ Bucket = 'garden-snapshots', Amount = 96, Fps = 6 }, context, cb) {
+exports.handler = function ({ Bucket = 'garden-snapshots', Amount = 24, Fps = 6 }, context, cb) {
   const timelapsePath = `/tmp/timelapse.mp4`
 
   downloadS3Images({ Bucket })
@@ -27,13 +28,9 @@ exports.handler = function ({ Bucket = 'garden-snapshots', Amount = 96, Fps = 6 
           .filter(d => d.Key.startsWith('201'))
           .filter((d, i) => i > (data.Contents.length - 1 - Amount)).map(d => d.Key)
 
-        const tasks = files.map(Key => getObject({ Bucket, Key }))
-
-        return Promise.all(tasks)
+        return Promise.all(files.map(Key => getObject({ Bucket, Key })))
       })
-      .then(results => {
-        results.forEach((r, i) => fs.writeFileSync(`/tmp/${i}.jpg`, r.Body))
-      })
+      .then(files => Promise.all(files.map((file, i) => writeFilePromise(`/tmp/${i}.jpg`, file.Body))))
   }
 
   function createTimelapse () {
@@ -44,6 +41,7 @@ exports.handler = function ({ Bucket = 'garden-snapshots', Amount = 96, Fps = 6 
         .outputOptions(`-r ${Fps}`)
         .videoCodec('libx264')
         .on('error', (err) => {
+          console.error('Error during processing', err)
           reject(err)
         })
         .on('end', () => {
