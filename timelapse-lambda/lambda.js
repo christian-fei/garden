@@ -11,7 +11,7 @@ const putObject = promisify(S3.putObject).bind(S3)
 const ffmpeg = require('fluent-ffmpeg')
 
 exports.handler = function (event, context, cb) {
-  const outFilePath = `/tmp/out.mp4`
+  const timelapsePath = `/tmp/timelapse.mp4`
   let files = []
 
   const { Bucket = 'garden-snapshots', Amount = 96, Fps = 6 } = event
@@ -53,14 +53,14 @@ exports.handler = function (event, context, cb) {
           console.log('Processing finished !')
           resolve()
         })
-        .save(outFilePath, { end: true })
+        .save(timelapsePath, { end: true })
     })
   }
 
   function saveTimelapseToS3 () {
     return putObject({
       // ACL: 'authenticated-read',
-      Body: fs.readFileSync(outFilePath),
+      Body: fs.readFileSync(timelapsePath),
       Bucket: Bucket,
       Key: 'timelapse.mp4'
     })
