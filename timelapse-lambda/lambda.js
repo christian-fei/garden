@@ -10,23 +10,20 @@ const putObject = promisify(S3.putObject).bind(S3)
 
 const ffmpeg = require('fluent-ffmpeg')
 
-exports.handler = function (event, context, cb) {
+exports.handler = function ({ Bucket = 'garden-snapshots', Amount = 96, Fps = 6 }, context, cb) {
   const timelapsePath = `/tmp/timelapse.mp4`
-  let files = []
-
-  const { Bucket = 'garden-snapshots', Amount = 96, Fps = 6 } = event
 
   downloadS3Images({ Bucket })
     .then(createTimelapse)
     .then(saveTimelapseToS3)
-    .then((data) => cb(null, { success: true, files, data }))
-    .catch(err => cb(err, { files }))
+    .then((data) => cb(null, { success: true, data }))
+    .catch(err => cb(err))
 
   function downloadS3Images ({ Bucket } = {}) {
     if (!Bucket) throw new Error('Bucket missing')
     return listObjects({ Bucket })
       .then(data => {
-        files = data.Contents
+        const files = data.Contents
           .filter(d => d.Key.startsWith('201'))
           .filter((d, i) => i > (data.Contents.length - 1 - Amount)).map(d => d.Key)
 
