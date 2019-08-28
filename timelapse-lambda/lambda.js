@@ -11,52 +11,40 @@ const putObject = promisify(S3.putObject).bind(S3)
 
 const ffmpeg = require('fluent-ffmpeg')
 
-exports.handler = function ({ Bucket = 'garden-snapshots', Amount = 24, Fps = 6 }, context, cb) {
-  const timelapsePath = `/tmp/timelapse.mp4`
-
-  downloadS3Images({ Bucket })
-    .then(createTimelapse)
-    .then(saveTimelapseToS3)
+exports.handler = function ({ bucket = 'garden-snapshots', amount = 24, fps = 6, name = 'timelapse.mp4' }, context, cb) {
+  downloadS3Images({ bucket })
+    .then(() => createTimelapse({ name }))
+    .then(() => saveTimelapseToS3({ bucket, name }))
     .then((data) => cb(null, { success: true, data }))
     .catch(err => cb(err))
 
-  function downloadS3Images ({ Bucket } = {}) {
-    if (!Bucket) throw new Error('Bucket missing')
-    return listObjects({ Bucket })
+  function timelapsePathFor (name) { return `/tmp/${name}` }
+
+  function downloadS3Images ({ bucket } = {}) {
+    if (!bucket) throw new Error('bucket missing')
+    return listObjects({ Bucket: bucket })
       .then(data => {
         const files = data.Contents
           .filter(d => d.Key.startsWith('201'))
-          .filter((d, i) => i > (data.Contents.length - 1 - Amount)).map(d => d.Key)
+          .filter((d, i) => i > (data.Contents.length - 1 - amount)).map(d => d.Key)
 
-        return Promise.all(files.map(Key => getObject({ Bucket, Key })))
+        return Promise.all(files.map(file => getObject({ Bucket: bucket, Key: file })))
       })
       .then(files => Promise.all(files.map((file, i) => writeFilePromise(`/tmp/${i}.jpg`, file.Body))))
   }
 
-  function createTimelapse () {
+  function createTimelapse ({ name = `timelapse.mp4`, fps = 6 } = {}) {
+    const timelapsePath = timelapsePathFor(name)
     return new Promise((resolve, reject) => {
-      ffmpeg()
-        .addInput('/tmp/%01d.jpg')
-        .noAudio()
-        .outputOptions(`-r ${Fps}`)
-        .videoCodec('libx264')
-        .on('error', (err) => {
-          console.error('Error during processing', err)
-          reject(err)
-        })
-        .on('end', () => {
-          console.log('Processing finished !')
-          resolve()
-        })
+      ffmpeg().addInput('/tmp/%01d.jpg').noAudio().outputOptions(`-r ${fps}`).videoCodec('libx264')
+        .on('error', (err) => { console.error('Error during processing', err); reject(err) })
+        .on('end', () => { console.log('Processing finished !'); resolve() })
         .save(timelapsePath, { end: true })
     })
   }
 
-  function saveTimelapseToS3 () {
-    return putObject({
-      Body: fs.readFileSync(timelapsePath),
-      Bucket,
-      Key: 'timelapse.mp4'
-    })
+  function saveTimelapseToS3 ({ bucket, name }) {
+    const timelapsePath = timelapsePathFor(name)
+    return putObject({ Body: fs.readFileSync(timelapsePath), Bucket: bucket, Key: name })
   }
 }
