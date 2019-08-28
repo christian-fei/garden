@@ -81,7 +81,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
       const bucket = 'garden-snapshots'
       const amount = 48
       const fps = 6
-      bot.sendMessage(chat_id, `Timelapse of ${amount} snapshots @ ${fps} fps \n(1 frame = 30 min, total ${+(fps * 30 / 6) / 10} days)`)
+      bot.sendMessage(chat_id, `Timelapse of ${amount} snapshots @ ${fps} fps \nShot every 30 min for a total of ${+(fps * 30 / 6) / 10} days`)
       await bot.sendVideo(chat_id, await takeTimelapse({ name, bucket, amount, fps }), {}, { contentType: 'video/mp4' })
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
