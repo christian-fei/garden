@@ -26,7 +26,7 @@
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "fluent-ffmpeg": "^2.1.2",
-    "got": "^11.3.0",
+    "got": "^9.6.0",
     "gpio": "^0.2.10",
     "heat-index": "0.0.3",
     "m.uuid": "^1.0.3",
