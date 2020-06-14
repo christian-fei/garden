@@ -5,7 +5,7 @@ console.log('BASIC_AUTH_USERNAME, BASIC_AUTH_PASSWORD', BASIC_AUTH_USERNAME, BAS
 
 const express = require('express')
 const basicAuth = require('express-basic-auth')
-const { takePhoto, takeVideo } = require('../lib/camera')
+const { lastPhoto, takePhoto, takeVideo } = require('../lib/camera')
 const { gatherIP } = require('../lib/ip')
 const { gatherReport } = require('../lib/report')
 
@@ -30,6 +30,16 @@ app.get('/report', async (req, res) => {
 })
 app.get('/photo', async (req, res) => {
   const buffer = await takePhoto()
+
+  res.writeHead(200, {
+    'Content-Type': 'image/jpeg',
+    'Content-Length': buffer.length
+  })
+
+  res.end(buffer)
+})
+app.get('/photo/last', async (req, res) => {
+  const buffer = await lastPhoto()
 
   res.writeHead(200, {
     'Content-Type': 'image/jpeg',
