@@ -46,7 +46,7 @@ module.exports = {
       ref: 'origin/master',
       repo: 'https://github.com/christian-fei/garden.git',
       path: '/home/pi/garden',
-      'post-deploy': 'npm install && cp /home/pi/.env /home/pi/garden/current/.env && pm2 startOrGracefulReload ecosystem.config.js --env production'
+      'post-deploy': 'npm install --only prod && cp /home/pi/.env /home/pi/garden/current/.env && pm2 startOrGracefulReload ecosystem.config.js --env production'
     }
   }
 }
