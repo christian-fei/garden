@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+cd /home/pi/snapshots/
+ls -tp | grep -v '/$' | tail -n +48 | xargs -I {} rm -- {}
