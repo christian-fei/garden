@@ -20,6 +20,12 @@ sudo systemctl status stream-rtsp.service
 
 this will make an rtsp stream available at `rtsp://:8554/`
 
+# take a frame from the stream
+
+```sh
+ffmpeg -y -i rtsp://:8554/ -vframes 1 frame.jpg
+```
+
 ## notes
 
 current constraint: you'll need to use the region `us-east-1`
