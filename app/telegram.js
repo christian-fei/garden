@@ -6,7 +6,7 @@ const Telegram = require('node-telegram-bot-api')
 
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 const { gatherIP } = require('../lib/ip') // todo rename takeIp
-const { takePhoto, takeVideo, takeTimelapse } = require('../lib/camera')
+const { takePhoto, takeVideo } = require('../lib/camera')
 const { gatherReport } = require('../lib/report')
 const { forceOff, forceOn } = require('../lib/pump')
 
@@ -76,13 +76,7 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     try {
       bot.answerCallbackQuery(id, { text: 'Making timelapse, might take a while!' })
       bot.editMessageText('Making timelapse...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-
-      const name = 'timelapse.mp4'
-      const bucket = 'garden-snapshots'
-      const amount = 48
-      const fps = 6
-      bot.sendMessage(chat_id, `Timelapse of ${amount} snapshots @ ${fps} fps \nShot every 30 min for a total of ${+(fps * 30 / 6) / 10} days`)
-      await bot.sendVideo(chat_id, await takeTimelapse({ name, bucket, amount, fps }), {}, { contentType: 'video/mp4' })
+      bot.sendMessage(chat_id, `Not implemented`)
       bot.deleteMessage(chat_id, message_id)
     } catch (err) {
       console.error(err)

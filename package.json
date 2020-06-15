@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/christian-fei/garden#readme",
   "dependencies": {
-    "aws-sdk": "^2.518.0",
     "dotenv": "^8.0.0",
     "ds18b20-raspi": "^0.3.3",
     "execa": "^4.0.2",
