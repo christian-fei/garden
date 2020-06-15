@@ -10,7 +10,7 @@ NOW_SNAPSHOT_PATH="$SNAPSHOT_PATH/$SNAPSHOT_NAME"
 CURRENT_SNAPSHOT_PATH="$SNAPSHOT_PATH/last.jpg"
 echo "taking snapshot $NOW_SNAPSHOT_PATH"
 
-ffmpeg -y -i rtsp://:8554/ -vframes 3 "$NOW_SNAPSHOT_PATH"
+ffmpeg -y -i rtsp://:8554/ -vframes 1 "$NOW_SNAPSHOT_PATH"
 
 echo "snapshot saved $NOW_SNAPSHOT_PATH"
 cp "$NOW_SNAPSHOT_PATH" "$CURRENT_SNAPSHOT_PATH"

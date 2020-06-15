@@ -7,6 +7,6 @@ mkdir -p "$SNAPSHOT_PATH"
 CURRENT_SNAPSHOT_PATH="$SNAPSHOT_PATH/last.jpg"
 echo "taking snapshot $CURRENT_SNAPSHOT_PATH"
 
-ffmpeg -y -i rtsp://:8554/ -vframes 3 "$CURRENT_SNAPSHOT_PATH"
+ffmpeg -y -i rtsp://:8554/ -vframes 1 "$CURRENT_SNAPSHOT_PATH"
 
 echo "snapshot saved $CURRENT_SNAPSHOT_PATH"
