@@ -3,7 +3,7 @@ Description=auto start stream
 After=multi-user.target
 [Service]
 Type=simple
-ExecStart=/home/pi/stream-rtsp.sh
+ExecStart=/home/pi/garden/current/scripts/stream-rtsp.sh
 User=pi
 WorkingDirectory=/home/pi
 Restart=on-failure
