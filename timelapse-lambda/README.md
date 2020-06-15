@@ -2,6 +2,24 @@
 
 create a file `secrets` starting from `secrets.example`
 
+# crontab
+
+copy the contents of `crontab` by editing with `crontab -e`
+
+# streaming service
+
+copy the contents of `stream-rtsp.service` to `/etc/systemd/system/stream-rtsp.service`
+
+then
+
+```sh
+sudo systemctl enable stream-rtsp.service
+sudo systemctl start stream-rtsp.service
+sudo systemctl status stream-rtsp.service
+```
+
+this will make an rtsp stream available at `rtsp://:8554/`
+
 ## notes
 
 current constraint: you'll need to use the region `us-east-1`
