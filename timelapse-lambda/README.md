@@ -20,6 +20,8 @@ sudo systemctl status stream-rtsp.service
 
 this will make an rtsp stream available at `rtsp://:8554/`
 
+see [this](https://chriscarey.com/blog/2017/04/30/achieving-high-frame-rate-with-a-raspberry-pi-camera-system/comment-page-1/) for more info
+
 # take a frame from the stream
 
 ```sh
