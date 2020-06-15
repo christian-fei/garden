@@ -6,9 +6,8 @@ const Telegram = require('node-telegram-bot-api')
 
 const { env: { TELEGRAM_CHAT_ID, TELEGRAM_TOKEN } } = process
 const { gatherIP } = require('../lib/ip') // todo rename takeIp
-const { takePhoto, takeVideo } = require('../lib/camera')
+const { takePhoto } = require('../lib/camera')
 const { gatherReport } = require('../lib/report')
-const { forceOff, forceOn } = require('../lib/pump')
 
 const bot = new Telegram(TELEGRAM_TOKEN, { polling: true })
 
@@ -42,7 +41,7 @@ bot.onText(/\/report/, async ({ chat: { id: chat_id } }) => {
 
 bot.onText(/\/garden/, ({ chat: { id: chat_id } }) => {
   console.log('/garden [...awaiting choice]')
-  bot.sendMessage(chat_id, `Its currently ${'20'}°C at ${'65'}% humidity outside.\nHow may i help you?`, { reply_markup: { inline_keyboard: [[{ text: 'Photo', callback_data: 'photo' }], [{ text: 'Video', callback_data: 'video' }], [{ text: 'Timelapse', callback_data: 'timelapse' }], [{ text: 'Pump', callback_data: 'pump' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
+  bot.sendMessage(chat_id, `Its currently ${'20'}°C at ${'65'}% humidity outside.\nHow may i help you?`, { reply_markup: { inline_keyboard: [[{ text: 'Photo', callback_data: 'photo' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
 })
 
 bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: chat_id } } }) => {
@@ -60,91 +59,11 @@ bot.on('callback_query', async ({ id, data, message: { message_id, chat: { id: c
     }
   }
 
-  if (data === 'video') {
-    try {
-      bot.answerCallbackQuery(id, { text: 'Shooting video, might take a while!' })
-      bot.editMessageText('Shooting video...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      await bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
-      bot.deleteMessage(chat_id, message_id)
-    } catch (err) {
-      console.error(err)
-      bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
-    }
-  }
-
-  if (data === 'timelapse') {
-    try {
-      bot.answerCallbackQuery(id, { text: 'Making timelapse, might take a while!' })
-      bot.editMessageText('Making timelapse...', { chat_id, message_id, reply_markup: { inline_keyboard: [] } })
-      bot.sendMessage(chat_id, `Not implemented`)
-      bot.deleteMessage(chat_id, message_id)
-    } catch (err) {
-      console.error(err)
-      bot.sendMessage(chat_id, `Something went wrong, please try again later.\n${err}`)
-    }
-  }
-
-  if (data === 'pump') {
-    try {
-      bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
-      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      bot.sendMessage(chat_id, `Last watering was ${'yesterday'} at ${'06:30'}. Next scheduled watering time is ${'tomorrow'} at ${'6:30'}. Would you like to adjust water manually?`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Start Pump 30s', callback_data: 'pump_on_30s' }], [{ text: 'Start Pump 1m', callback_data: 'pump_on_1m' }], [{ text: 'Start Pump 2m', callback_data: 'pump_on_2m' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
-    } catch (err) {
-      console.error(err)
-      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
-    }
-  }
-
-  if (data === 'pump_off') {
-    try {
-      bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
-      bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-      await forceOff({ delay: 0 })
-      bot.sendMessage(chat_id, `Pump has been successfuly turned off. `)
-    } catch (err) {
-      console.error(err)
-      bot.sendMessage(chat_id, 'Something went wrong, please try again later.')
-    }
-  }
-
-  if (data === 'pump_on_30s') {
-    pumpOn(id, chat_id, message_id, { label: '30 seconds', timeout: 30000 })
-  }
-
-  if (data === 'pump_on_1m') {
-    pumpOn(id, chat_id, message_id, { label: '1 minute', timeout: 60000 })
-  }
-
-  if (data === 'pump_on_2m') {
-    pumpOn(id, chat_id, message_id, { label: 'two minutes', timeout: 120000 })
-  }
-
   if (data === 'cancel') {
     bot.answerCallbackQuery(id, { text: 'Canceled!' })
     bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
   }
 })
-
-async function pumpOn (id, chat_id, message_id, { label, timeout }) {
-  try {
-    bot.answerCallbackQuery(id, { text: 'Connecting to pump, might take a while!' })
-    bot.editMessageReplyMarkup({ inline_keyboard: [] }, { chat_id, message_id })
-    const message = await bot.sendMessage(chat_id, `Pump has been successfuly turned on and will be switched off in ${label} unless you stop pump manually.`, { reply_markup: { inline_keyboard: [[{ text: 'Stop Pump', callback_data: 'pump_off' }], [{ text: 'Cancel', callback_data: 'cancel' }]] } })
-    ;(async (bot, chat_id) => {
-      bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
-    })(bot, chat_id)
-    ;(async (bot, chat_id) => {
-      await new Promise(resolve => setTimeout(resolve, timeout - 1500))
-      bot.sendVideo(chat_id, await takeVideo({ timeout: 5000 }), {}, { contentType: 'video/mp4' })
-    })(bot, chat_id)
-    await new Promise(resolve => setTimeout(resolve, 500))
-    await forceOn({ timeout, framerate: 10 })
-    bot.editMessageText(`Pump has been successfuly turned on and has been running ${label}!`, { chat_id, message_id: message.message_id, reply_markup: { inline_keyboard: [] } })
-  } catch (err) {
-    console.error(err)
-    bot.sendMessage(chat_id, 'Something went wrong, please check garden video and turn off pump manually if needed.')
-  }
-}
 
 // bot.on('message', (...args) => console.log('message', ...args))
 // bot.on('text', (...args) => console.log('text', ...args))

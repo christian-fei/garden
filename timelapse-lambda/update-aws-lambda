@@ -1,8 +1,0 @@
-#!/bin/bash
-
-source secrets
-
-aws lambda update-function-code \
-  --region $REGION \
-  --function-name GardenTimelapse \
-  --zip-file "fileb://lambda.zip"
